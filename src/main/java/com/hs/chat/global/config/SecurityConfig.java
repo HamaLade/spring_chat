@@ -1,8 +1,10 @@
 package com.hs.chat.global.config;
 
+import com.hs.chat.domain.service.login.oauth2.OAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -10,8 +12,12 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 
 @Configuration
@@ -20,7 +26,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final OAuth2AuthorizedClientRepository authorizedClientRepository;
+    private final OAuth2UserService oAuth2UserService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -33,20 +39,16 @@ public class SecurityConfig {
         http
                 .oauth2Login(oauth2Login ->
                         oauth2Login
-                                .authorizationEndpoint(authorizationEndpoint ->
-                                        authorizationEndpoint
-                                                .baseUri("/oauth2/authorization")
-                                )
-                                .authorizedClientRepository(authorizedClientRepository)
-                                .defaultSuccessUrl("/loginSuccess")
-                                .failureUrl("/loginFailure")
+                                .loginPage("/login")
+                                .successHandler(successHandler())
+                                .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuth2UserService))
                 );
 
         http
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                .sessionManagement(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(
                                 "/"
@@ -56,6 +58,27 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request.anyRequest().permitAll());
 
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler successHandler() {
+        return ((request, response, authentication) -> {
+            DefaultOAuth2User defaultOAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
+
+            String id = defaultOAuth2User.getAttributes().get("id").toString();
+            String body = """
+                    {"id":"%s"}
+                    """.formatted(id);
+
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+
+            PrintWriter writer = response.getWriter();
+            writer.println(body);
+            writer.flush();
+            // Index로 이동
+//            response.sendRedirect("/");
+        });
     }
 
 }
