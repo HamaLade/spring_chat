@@ -3,39 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Chat Site</title>
-    <link rel="stylesheet" th:href="@{/styles/default.css}">
+    <title>채팅방 목록</title>
+    <link rel="stylesheet" th:href="@{/style/index.css}">
 </head>
 <body>
-<header>
-    <div id="google-auth">
-        <a th:href="@{/login}">
-            로그인
-        </a>
-    </div>
-</header>
 
-<div id="main-content">
-    <aside id="open-chat-list">
-        <h2>오픈 채팅방</h2>
-        <ul>
-            <!-- 오픈 채팅방 목록이 여기에 표시됩니다 -->
-        </ul>
-    </aside>
-
-    <section id="private-chat">
-        <h2>개인 채팅방</h2>
-        <div id="chat-messages">
-            <!-- 개인 채팅 메시지가 여기에 표시됩니다 -->
-        </div>
-    </section>
-
-    <aside id="friend-list">
-        <h2>친구 목록</h2>
-        <ul>
-            <!-- 친구 목록이 여기에 표시됩니다 -->
-        </ul>
-    </aside>
+<div class="navbar">
+    <form action="/login" method="get">
+    <button class="login-button" type="submit">로그인</button>
+    </form>
 </div>
+
+<div class="container">
+    <div class="chat-section" id="open-chat">
+        <h2>오픈 채팅방</h2>
+        <!-- 채팅방 목록이 여기에 들어갑니다 -->
+    </div>
+
+    <div class="chat-section" id="private-chat">
+        <h2>개인 채팅방</h2>
+        <!-- 채팅방 목록이 여기에 들어갑니다 -->
+    </div>
+
+    <div class="chat-section" id="friends-list">
+        <h2>친구 목록</h2>
+        <!-- 친구 목록이 여기에 들어갑니다 -->
+    </div>
+</div>
+
 </body>
 </html>
+
