@@ -12,4 +12,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END FROM Member m WHERE m.socialType = :socialType AND m.socialId = :socialId")
     boolean existsMemberBySocialId(SocialType socialType, String socialId);
 
+    @Query("SELECT m FROM Member m WHERE m.socialType = :socialType AND m.socialId = :socialId")
+    Member findBySocialId(SocialType socialType, String socialId);
+
 }

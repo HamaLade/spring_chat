@@ -16,8 +16,8 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    public void save(Member member) {
-        memberRepository.save(member);
+    public Member save(Member member) {
+        return memberRepository.save(member);
     }
 
     public boolean isExistEmail(String memberId) {
@@ -26,6 +26,10 @@ public class MemberService {
 
     public boolean isExistSocialId(SocialType socialType, String socialId) {
         return memberRepository.existsMemberBySocialId(socialType, socialId);
+    }
+
+    public Member findBySocialId(SocialType socialType, String socialId) {
+        return memberRepository.findBySocialId(socialType, socialId);
     }
 
 }
