@@ -1,10 +1,13 @@
 package com.hs.chat.domain.model.user.enums;
 
+import com.hs.chat.domain.exception.oauth.UnsupportedRegistration;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @RequiredArgsConstructor
+@Slf4j
 public enum SocialType {
 
     GOOGLE("구글", "google"),
@@ -22,7 +25,9 @@ public enum SocialType {
                 return socialType;
             }
         }
-        return null;
+        log.info("기타 로그인 요청");
+        // 지원하지 않는 로그인 예외 발생
+        throw new UnsupportedRegistration("지원하지 않는 로그인입니다.");
     }
 
 }

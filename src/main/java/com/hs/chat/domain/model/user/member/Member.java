@@ -1,6 +1,7 @@
 package com.hs.chat.domain.model.user.member;
 
 import com.hs.chat.domain.model.user.enums.SocialType;
+import com.hs.chat.global.enums.UserType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -32,6 +33,8 @@ public class Member {
 
     private Boolean isLocked;
 
+    private UserType userType;
+
     @Builder
     public Member(
             String memberId
@@ -48,6 +51,7 @@ public class Member {
         this.isDeleted = isDeleted;
         this.isLocked = isLocked;
         this.isSocial = false;
+        this.userType = UserType.USER;
     }
 
     public Member(SocialType socialType, String socialId) {
@@ -56,5 +60,6 @@ public class Member {
         this.isSocial = true;
         this.isDeleted = false;
         this.isLocked = false;
+        this.userType = UserType.USER;
     }
 }
