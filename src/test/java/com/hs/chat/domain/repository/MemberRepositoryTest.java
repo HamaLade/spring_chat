@@ -1,7 +1,7 @@
 package com.hs.chat.domain.repository;
 
 import com.hs.chat.domain.model.user.member.Member;
-import org.junit.jupiter.api.BeforeAll;
+import com.hs.chat.domain.repository.user.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

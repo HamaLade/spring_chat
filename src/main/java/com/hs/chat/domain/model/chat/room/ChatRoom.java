@@ -34,4 +34,12 @@ public class ChatRoom {
     @LastModifiedDate
     private LocalDateTime updateDateTime;
 
+    public static ChatRoom create(String roomName, String roomPassword, RoomType roomType) {
+        ChatRoom chatRoom = new ChatRoom();
+        chatRoom.roomName = roomName;
+        chatRoom.roomPassword = roomPassword == null || roomPassword.isEmpty() ? null : roomPassword;
+        chatRoom.roomType = roomType;
+        return chatRoom;
+    }
+
 }

@@ -1,7 +1,9 @@
 package com.hs.chat.domain.model.chat.message;
 
+import com.hs.chat.domain.enums.chat.ChatType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -26,10 +28,23 @@ public class ChatMessage {
 
     private String message;
 
+    private ChatType chatType;
+
     @CreatedDate
     private LocalDateTime createdDateTime;
 
     @LastModifiedDate
     private LocalDateTime updateDateTime;
 
+    public void enter(String name) {
+            this.message = name + "님이 입장하였습니다.";
+    }
+
+    @Builder
+    public ChatMessage(Long chatRoomSeq, Long userSeq, String message, ChatType chatType, LocalDateTime createdDateTime, LocalDateTime updateDateTime) {
+        this.chatRoomSeq = chatRoomSeq;
+        this.userSeq = userSeq;
+        this.message = message;
+        this.chatType = chatType;
+    }
 }

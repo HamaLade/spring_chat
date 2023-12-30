@@ -2,7 +2,7 @@ package com.hs.chat.domain.service.login.oauth2;
 
 import com.hs.chat.domain.model.user.enums.SocialType;
 import com.hs.chat.domain.model.user.member.Member;
-import com.hs.chat.domain.repository.MemberRepository;
+import com.hs.chat.domain.repository.user.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

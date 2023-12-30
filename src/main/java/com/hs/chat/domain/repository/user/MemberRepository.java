@@ -1,4 +1,4 @@
-package com.hs.chat.domain.repository;
+package com.hs.chat.domain.repository.user;
 
 import com.hs.chat.domain.model.user.enums.SocialType;
 import com.hs.chat.domain.model.user.member.Member;
