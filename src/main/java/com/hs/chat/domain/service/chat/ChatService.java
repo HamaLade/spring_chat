@@ -2,42 +2,43 @@ package com.hs.chat.domain.service.chat;
 
 import com.hs.chat.domain.model.chat.room.ChatRoom;
 import com.hs.chat.domain.model.chat.room.enums.RoomType;
-import jakarta.annotation.PostConstruct;
+import com.hs.chat.domain.repository.chatroom.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ChatService {
 
-    private Map<Long, ChatRoom> chatRooms;
+    private final ChatRoomRepository chatRoomRepository;
 
-    @PostConstruct
-    //의존관게 주입완료되면 실행되는 코드
-    private void init() {
-        chatRooms = new LinkedHashMap<>();
+    // 모든 채팅방 생성일기준 내림차순 불러오기
+    public List<ChatRoom> findAllRoom() {
+        return chatRoomRepository.findAllAvailableChatRoomsOrderByChatRoomSeqDesc();
     }
 
-    //채팅방 불러오기
-    public List<ChatRoom> findAllRoom() {
-        //채팅방 최근 생성 순으로 반환
-        List<ChatRoom> result = new ArrayList<>(chatRooms.values());
-        Collections.reverse(result);
-
-        return result;
+    public List<ChatRoom> findAllPublicRoom() {
+        return chatRoomRepository.findAllPublicAvailableChatRoomsOrderByChatRoomSeqDesc();
     }
 
     //채팅방 하나 불러오기
-    public ChatRoom findById(String roomId) {
-        return chatRooms.get(roomId);
+    public ChatRoom findById(Long roomId) {
+        return chatRoomRepository.findById(roomId).orElseThrow();
     }
 
     //채팅방 생성
-    public ChatRoom createRoom(String roomName, String roomPassword, RoomType roomType) {
-        ChatRoom chatRoom = ChatRoom.create(roomName, roomPassword, roomType);
-        chatRooms.put(chatRoom.getChatRoomSeq(), chatRoom);
+    @Transactional
+    public ChatRoom createRoom(String roomName, String roomPassword, Boolean isPublic) {
+
+        ChatRoom chatRoom = ChatRoom.create(roomName, roomPassword, isPublic);
+        chatRoomRepository.save(chatRoom);
+
         return chatRoom;
     }
 }

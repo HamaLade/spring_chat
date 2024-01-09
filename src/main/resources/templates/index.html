@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,8 +9,11 @@
 <body>
 
 <div class="navbar">
-    <form action="/login" method="get">
-    <button class="login-button" type="submit">로그인</button>
+    <form sec:authorize="isAnonymous()"  th:action="@{/login}">
+        <button class="login-button" type="submit" sec:authorize="isAnonymous()" th:href="@{/login}">로그인</button>
+    </form>
+    <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post">
+        <button class="login-button" type="submit" sec:authorize="isAuthenticated()">로그아웃</button>
     </form>
 </div>
 

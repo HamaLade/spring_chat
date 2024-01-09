@@ -3,11 +3,10 @@ package com.hs.chat.domain.service.login.oauth2;
 import com.hs.chat.domain.exception.oauth.OauthException;
 import com.hs.chat.domain.model.user.enums.SocialType;
 import com.hs.chat.domain.model.user.member.Member;
-import com.hs.chat.global.util.RoleUtils;
+import com.hs.chat.global.util.AuthorityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -62,7 +61,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
         // Member가 null이 아니면, 회원이므로 ROLE_USER 권한을 부여하여 SecurityContext에 저장
         if (member != null) {
-            authorities = AuthorityUtils.createAuthorityList(RoleUtils.getRoleName(member.getUserType()));
+            authorities = org.springframework.security.core.authority.AuthorityUtils.createAuthorityList(AuthorityUtils.getRoleName(member.getUserType()));
         }
 
         return new DefaultOAuth2User(authorities, oAuth2User.getAttributes(), userNameAttributeName);

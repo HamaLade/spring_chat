@@ -1,6 +1,5 @@
 package com.hs.chat.domain.model.chat.room;
 
-import com.hs.chat.domain.model.chat.room.enums.RoomType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,8 +24,11 @@ public class ChatRoom {
 
     private String roomPassword;
 
-    @Enumerated(EnumType.STRING)
-    private RoomType roomType;
+    private Boolean isDeleted;
+
+    private Boolean isBlocked;
+
+    private Boolean isPublic;
 
     @CreatedDate
     private LocalDateTime createdDateTime;
@@ -34,11 +36,11 @@ public class ChatRoom {
     @LastModifiedDate
     private LocalDateTime updateDateTime;
 
-    public static ChatRoom create(String roomName, String roomPassword, RoomType roomType) {
+    public static ChatRoom create(String roomName, String roomPassword, Boolean isPublic) {
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.roomName = roomName;
         chatRoom.roomPassword = roomPassword == null || roomPassword.isEmpty() ? null : roomPassword;
-        chatRoom.roomType = roomType;
+        chatRoom.isPublic = isPublic;
         return chatRoom;
     }
 

@@ -37,7 +37,7 @@ public class ChatRoomController {
         return chatService.createRoom(
                 chatRoomCreateRequestDto.getRoomName()
                 , chatRoomCreateRequestDto.getRoomPassword()
-                , chatRoomCreateRequestDto.getRoomType()
+                , chatRoomCreateRequestDto.getIsPublic()
         );
     }
 
@@ -51,7 +51,7 @@ public class ChatRoomController {
     // 특정 채팅방 조회
     @GetMapping("/room/{roomId}")
     @ResponseBody
-    public ChatRoom roomInfo(@PathVariable String roomId) {
+    public ChatRoom roomInfo(@PathVariable Long roomId) {
         return chatService.findById(roomId);
     }
 }
