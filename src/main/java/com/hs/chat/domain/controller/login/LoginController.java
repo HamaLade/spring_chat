@@ -14,7 +14,6 @@ public class LoginController {
 
     @GetMapping("")
     public String loginPage() {
-        log.info("loginPage");
         return "login";
     }
 

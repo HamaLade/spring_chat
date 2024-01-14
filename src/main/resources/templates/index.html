@@ -15,17 +15,29 @@
     <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post">
         <button class="login-button" type="submit" sec:authorize="isAuthenticated()">로그아웃</button>
     </form>
+    <a class="blue-button" type="submit" th:href="@{/chatroom/create/public}">오픈 채팅방 개설</a>
+    <a class="blue-button" type="submit" sec:authorize="isAuthenticated()" th:href="@{/chatroom/create/private}">오픈 채팅방 개설</a>
 </div>
 
 <div class="container">
     <div class="chat-section" id="open-chat">
         <h2>오픈 채팅방</h2>
         <!-- 채팅방 목록이 여기에 들어갑니다 -->
+        <table th:if = "${publicChatRooms != null && publicChatRooms.size() != 0}">
+            <tr th:each="${publicChatRooms}">
+                <td th:text="${publicChatRooms.roomName}" th:id="${publicChatRooms.chatRoomSeq}"></td>
+            </tr>
+        </table>
     </div>
 
     <div class="chat-section" id="private-chat">
         <h2>개인 채팅방</h2>
         <!-- 채팅방 목록이 여기에 들어갑니다 -->
+        <table th:if = "${privateChatRooms != null && privateChatRooms.size() != 0}">
+            <tr th:each="${privateChatRooms}">
+                <td th:text="${privateChatRooms.roomName}" th:id="${privateChatRooms.chatRoomSeq}"></td>
+            </tr>
+        </table>
     </div>
 
     <div class="chat-section" id="friends-list">
