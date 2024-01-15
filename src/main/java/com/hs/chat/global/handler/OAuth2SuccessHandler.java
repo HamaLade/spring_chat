@@ -37,7 +37,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        String registerId = oAuth2User.getAttributes().get("registerId").toString();
+        String registerId = oAuth2User.getAttributes().get("id").toString();
         String registrationId = oAuth2User.getAttributes().get("registrationId").toString();
         Member member = memberService.findBySocialId(SocialType.of(registrationId), registerId);
         String refreshToken = tokenProvider.generateToken(member.toUser(), REFRESH_TOKEN_DURATION);
