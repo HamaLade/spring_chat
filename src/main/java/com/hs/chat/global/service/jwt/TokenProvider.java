@@ -28,7 +28,7 @@ public class TokenProvider {
         Date now = new Date();
         return makeToken(new Date(now.getTime() + expiredAt.toMillis()), user);
     }
-    // ❶ JWT 토큰 생성 메서드
+
     private String makeToken(Date expiry, User user) {
         Date now = new Date();
 
@@ -41,34 +41,32 @@ public class TokenProvider {
                 .signWith(jwtProperties.getSecretKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
-    // ❷ JWT 토큰 유효성 검증 메서드
     public boolean validToken(String token) {
         try {
             Jwts.parser()
-                    .setSigningKey(jwtProperties.getSecretKey()) // 비밀값으로 복호화
+                    .setSigningKey(jwtProperties.getSecretKey())
                     .parseClaimsJws(token);
 
             return true;
-        } catch (Exception e) { // 복호화 과정에서 에러가 나면 유효하지 않은 토큰
+        } catch (Exception e) {
             return false;
         }
     }
 
-    // ❸ 토큰 기반으로 인증 정보를 가져오는 메서드
     public Authentication getAuthentication(String token) {
         Claims claims = getClaims(token);
         Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
 
         return new UsernamePasswordAuthenticationToken(new User(claims.getSubject(), "", authorities), token, authorities);
     }
-    // ❹ 토큰 기반으로 유저 ID를 가져오는 메서드
+
     public Long getUserId(String token) {
         Claims claims = getClaims(token);
         return claims.get("id", Long.class);
     }
 
     private Claims getClaims(String token) {
-        return Jwts.parser() // 클레임 조회
+        return Jwts.parser()
                 .setSigningKey(jwtProperties.getSecretKey())
                 .parseClaimsJws(token)
                 .getBody();

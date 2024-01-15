@@ -29,7 +29,7 @@ public class MemberService {
     }
 
     public Member findBySocialId(SocialType socialType, String socialId) {
-        return memberRepository.findBySocialId(socialType, socialId);
+        return memberRepository.findBySocialId(socialType, socialId).orElse(null);
     }
 
 }
