@@ -3,33 +3,23 @@ package com.hs.chat.global.config;
 import com.hs.chat.domain.service.login.oauth2.MemberService;
 import com.hs.chat.domain.service.login.oauth2.OAuth2UserService;
 import com.hs.chat.global.common.TokenAuthenticationFilter;
-import com.hs.chat.global.handler.OAuth2SuccessHandler;
-import com.hs.chat.global.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.hs.chat.global.repository.jwt.JwtTokenRepository;
 import com.hs.chat.global.service.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
-
-import java.nio.charset.StandardCharsets;
-
-import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 
 
 @Configuration
@@ -57,15 +47,6 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
-
-        http
-                .oauth2Login(oauth2Login ->
-                        oauth2Login
-                                .loginPage("/login")
-                                .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuth2UserService))
-                                .successHandler(oAuth2SuccessHandler())
-
-                );
 
         http
                 .httpBasic(AbstractHttpConfigurer::disable)
@@ -104,19 +85,19 @@ public class SecurityConfig {
 //        });
 //    }
 
-    @Bean
-    public OAuth2SuccessHandler oAuth2SuccessHandler() {
-        return new OAuth2SuccessHandler(
-                tokenProvider
-                , jwtTokenRepository
-                , oAuth2AuthorizationRequestBasedOnCookieRepository()
-                , memberService
-        );
-    }
+//    @Bean
+//    public OAuth2SuccessHandler oAuth2SuccessHandler() {
+//        return new OAuth2SuccessHandler(
+//                tokenProvider
+//                , jwtTokenRepository
+//                , oAuth2AuthorizationRequestBasedOnCookieRepository()
+//                , memberService
+//        );
+//    }
 
-    @Bean
-    public OAuth2AuthorizationRequestBasedOnCookieRepository oAuth2AuthorizationRequestBasedOnCookieRepository() {
-        return new OAuth2AuthorizationRequestBasedOnCookieRepository();
-    }
+//    @Bean
+//    public OAuth2AuthorizationRequestBasedOnCookieRepository oAuth2AuthorizationRequestBasedOnCookieRepository() {
+//        return new OAuth2AuthorizationRequestBasedOnCookieRepository();
+//    }
 
 }
