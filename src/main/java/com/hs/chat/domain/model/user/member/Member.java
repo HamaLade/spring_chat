@@ -87,10 +87,6 @@ public class Member implements UserDetails, OAuth2User {
         this.userType = UserType.USER;
     }
 
-    public User toUser() {
-        return new User(String.valueOf(memberSeq), "", getAuthorities());
-    }
-
     @Override
     public Map<String, Object> getAttributes() {
 return null;
@@ -109,7 +105,7 @@ return null;
 
     @Override
     public String getUsername() {
-        return memberId == null ? oauthId : memberId;
+        return String.valueOf(memberSeq);
     }
 
     @Override

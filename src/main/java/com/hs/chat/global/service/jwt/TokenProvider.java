@@ -1,20 +1,25 @@
 package com.hs.chat.global.service.jwt;
 
 import com.hs.chat.global.common.jwt.JwtProperties;
+import com.hs.chat.global.util.HttpServletUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -23,23 +28,44 @@ public class TokenProvider {
 
     private final JwtProperties jwtProperties;
 
-    public String generateToken(User user, Duration expiredAt) {
+    public String generateToken(UserDetails userDetails, Duration expiredAt, boolean isRefreshToken) {
         Date now = new Date();
-        return makeToken(new Date(now.getTime() + expiredAt.toMillis()), user);
+        return makeToken(new Date(now.getTime() + expiredAt.toMillis()), userDetails, isRefreshToken);
     }
 
-    private String makeToken(Date expiry, User user) {
+    private String makeToken(Date expiry, UserDetails userDetails, boolean isRefreshToken) {
         Date now = new Date();
 
-        return Jwts.builder()
+        String jwt = Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setIssuer(jwtProperties.getIssuer())
                 .setIssuedAt(now)
-                .setSubject(user.getUsername())
                 .setExpiration(expiry)
-                .signWith(jwtProperties.getSecretKey(), SignatureAlgorithm.HS256)
+                .signWith(jwtProperties.getSecretKey(), isRefreshToken ? SignatureAlgorithm.HS512 : SignatureAlgorithm.HS256)
+                .setClaims(userDetailsToClaims(userDetails))
                 .compact();
+
+        if (isRefreshToken) {
+            Cookie refreshToken = new Cookie("tmp", jwt);
+            HttpServletUtil.getHttpServletResponse().addCookie(refreshToken);
+        }
+
+        return jwt;
     }
+
+    private Map<String, String> userDetailsToClaims(UserDetails userDetails) {
+
+        if (userDetails == null)
+            return Collections.emptyMap();
+
+        GrantedAuthority grantedAuthority = userDetails.getAuthorities().stream().findFirst().orElse(null);
+
+        return Map.of(
+                "id", userDetails.getUsername(),
+                "userType", grantedAuthority == null ? "" : grantedAuthority.getAuthority()
+        );
+    }
+
     public boolean validToken(String token) {
         try {
             Jwts.parser()
@@ -53,8 +79,10 @@ public class TokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
+
         Claims claims = getClaims(token);
-        Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
+        String userType = claims.get("userType", String.class);
+        Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority(userType));
 
         return new UsernamePasswordAuthenticationToken(new User(claims.getSubject(), "", authorities), token, authorities);
     }

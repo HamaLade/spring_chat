@@ -9,6 +9,7 @@ import com.hs.chat.global.dto.OauthTokenResponse;
 import com.hs.chat.global.enums.OauthAttributes;
 import com.hs.chat.global.enums.OauthAuthorize;
 import com.hs.chat.global.repository.InMemoryProviderRepository;
+import com.hs.chat.global.service.jwt.TokenProvider;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.Map;
 
@@ -25,43 +27,40 @@ public class OauthService {
 
     private final InMemoryProviderRepository inMemoryProviderRepository;
     private final MemberService memberService;
+    private final TokenProvider tokenProvider;
 
-    public OauthService(InMemoryProviderRepository inMemoryProviderRepository, MemberService memberService) {
+    public OauthService(InMemoryProviderRepository inMemoryProviderRepository, MemberService memberService, TokenProvider tokenProvider) {
         this.inMemoryProviderRepository = inMemoryProviderRepository;
         this.memberService = memberService;
+        this.tokenProvider = tokenProvider;
     }
 
     public LoginResponse login(String providerName, String code) {
-        // 프론트에서 넘어온 provider 이름을 통해 InMemoryProviderRepository에서 OauthProvider 가져오기
+
         OauthProvider provider = inMemoryProviderRepository.findByProviderName(providerName);
 
-        // access token 가져오기
         OauthTokenResponse tokenResponse = getToken(code, provider);
 
-        // 유저 정보 가져오기
         UserProfile userProfile = getUserProfile(providerName, tokenResponse, provider);
 
         Member member = memberService.save(userProfile.toMember());
 
-        LoginResponse.builder()
+        LoginResponse loginResponse = LoginResponse.builder()
                 .id(member.getMemberSeq())
                 .name(member.getName())
                 .email(member.getEmail())
                 .imageUrl(member.getImageUrl())
                 .userType(member.getUserType())
                 .tokenType("Bearer")
-//                .accessToken(accessToken)
-//                .refreshToken(refreshToken)
+                .accessToken(tokenProvider.generateToken(member, Duration.ofMinutes(15), false))
+                .refreshToken(tokenProvider.generateToken(member, Duration.ofDays(1), true))
                 .build();
 
-
-        // TODO 유저 DB에 저장
-        return null;
+        return loginResponse;
     }
 
     private UserProfile getUserProfile(String providerName, OauthTokenResponse tokenResponse, OauthProvider provider) {
         Map<String, Object> userAttributes = getUserAttributes(provider, tokenResponse);
-        // TODO 유저 정보(map)를 통해 UserProfile 만들기
         return OauthAttributes.extract(providerName, userAttributes);
     }
 

@@ -1,9 +1,8 @@
 package com.hs.chat.global.config;
 
-import com.hs.chat.domain.service.login.oauth2.MemberService;
-import com.hs.chat.domain.service.login.oauth2.OAuth2UserService;
-import com.hs.chat.global.common.TokenAuthenticationFilter;
 import com.hs.chat.domain.repository.jwt.JwtTokenRepository;
+import com.hs.chat.domain.service.login.oauth2.MemberService;
+import com.hs.chat.global.common.TokenAuthenticationFilter;
 import com.hs.chat.global.service.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +28,6 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 public class SecurityConfig {
 
     private final JwtTokenRepository jwtTokenRepository;
-    private final OAuth2UserService oAuth2UserService;
     private final TokenProvider tokenProvider;
     private final MemberService memberService;
 
@@ -58,7 +56,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> {
                     request
                             .requestMatchers(new MvcRequestMatcher(introspector, "/h2-console/**")).permitAll()
-                            .anyRequest().permitAll();
+                            .anyRequest().permitAll()
+                    ;
                 });
 
         return http.build();
@@ -68,36 +67,5 @@ public class SecurityConfig {
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
         return new TokenAuthenticationFilter(tokenProvider);
     }
-
-//    @Bean
-//    public AuthenticationSuccessHandler successHandler() {
-//        return ((request, response, authentication) -> {
-//
-//            DefaultOAuth2User defaultOAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
-//
-//            String id = defaultOAuth2User.getAttributes().get("id").toString();
-//
-//            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-//            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-//
-////             Index로 이동
-//            response.sendRedirect("/");
-//        });
-//    }
-
-//    @Bean
-//    public OAuth2SuccessHandler oAuth2SuccessHandler() {
-//        return new OAuth2SuccessHandler(
-//                tokenProvider
-//                , jwtTokenRepository
-//                , oAuth2AuthorizationRequestBasedOnCookieRepository()
-//                , memberService
-//        );
-//    }
-
-//    @Bean
-//    public OAuth2AuthorizationRequestBasedOnCookieRepository oAuth2AuthorizationRequestBasedOnCookieRepository() {
-//        return new OAuth2AuthorizationRequestBasedOnCookieRepository();
-//    }
 
 }
