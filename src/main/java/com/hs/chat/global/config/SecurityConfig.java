@@ -3,7 +3,7 @@ package com.hs.chat.global.config;
 import com.hs.chat.domain.service.login.oauth2.MemberService;
 import com.hs.chat.domain.service.login.oauth2.OAuth2UserService;
 import com.hs.chat.global.common.TokenAuthenticationFilter;
-import com.hs.chat.global.repository.jwt.JwtTokenRepository;
+import com.hs.chat.domain.repository.jwt.JwtTokenRepository;
 import com.hs.chat.global.service.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

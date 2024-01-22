@@ -6,7 +6,7 @@ oauth2:
       redirect-uri: http://localhost:8080/redirect/oauth
     kakao:
       client-id: ca7b2a1700b6028446099e7863956d56
-      client-secret: ${kakaoOauth2SecretKey}
+      client-secret: mEZI2kT7PkRYuiVqKHsh0GUFwg0bTvIU
       redirect-uri: http://localhost:8080/login/oauth2/code/kakao
   provider:
     google:

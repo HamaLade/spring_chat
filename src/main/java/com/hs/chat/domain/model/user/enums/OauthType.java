@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @RequiredArgsConstructor
 @Slf4j
-public enum SocialType {
+public enum OauthType {
 
     GOOGLE("구글", "google"),
     NAVER("네이버", "naver"),
@@ -19,8 +19,8 @@ public enum SocialType {
     private final String socialRegistrationId;
 
     // socialRegistrationId를 통해 SocialType을 찾는다.
-    public static SocialType of(String socialRegistrationId) {
-        for (SocialType socialType : SocialType.values()) {
+    public static OauthType of(String socialRegistrationId) {
+        for (OauthType socialType : OauthType.values()) {
             if (socialType.getSocialRegistrationId().equals(socialRegistrationId)) {
                 return socialType;
             }

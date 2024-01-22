@@ -1,6 +1,6 @@
 package com.hs.chat.domain.model.user.member;
 
-import com.hs.chat.domain.model.user.enums.SocialType;
+import com.hs.chat.domain.model.user.enums.OauthType;
 import com.hs.chat.global.enums.UserType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -29,11 +29,19 @@ public class Member implements UserDetails, OAuth2User {
 
     private String memberId;
 
-    private Boolean isSocial;
+    private Boolean isOauth;
 
-    private SocialType socialType;
+    private OauthType oauthType;
 
-    private String socialId;
+    private String oauthId;
+
+    private String email;
+
+    private String name;
+
+    private String nickname;
+
+    private String imageUrl;
 
     private String memberPassword;
 
@@ -46,26 +54,34 @@ public class Member implements UserDetails, OAuth2User {
     @Builder
     public Member(
             String memberId
-            , SocialType socialType
-            , String socialId
+            , OauthType oauthType
+            , String oauthId
+            , String email
+            , String name
+            , String nickname
+            , String imageUrl
             , String memberPassword
             , Boolean isDeleted
             , Boolean isLocked
     ) {
         this.memberId = memberId;
-        this.socialType = socialType;
-        this.socialId = socialId;
+        this.oauthType = oauthType;
+        this.oauthId = oauthId;
+        this.email = email;
+        this.name = name;
+        this.nickname = nickname;
+        this.imageUrl = imageUrl;
         this.memberPassword = memberPassword;
         this.isDeleted = isDeleted;
         this.isLocked = isLocked;
-        this.isSocial = false;
+        this.isOauth = false;
         this.userType = UserType.USER;
     }
 
-    public Member(SocialType socialType, String socialId) {
-        this.socialType = socialType;
-        this.socialId = socialId;
-        this.isSocial = true;
+    public Member(OauthType oauthType, String oauthId) {
+        this.oauthType = oauthType;
+        this.oauthId = oauthId;
+        this.isOauth = true;
         this.isDeleted = false;
         this.isLocked = false;
         this.userType = UserType.USER;
@@ -93,7 +109,7 @@ return null;
 
     @Override
     public String getUsername() {
-        return memberId == null ? socialId : memberId;
+        return memberId == null ? oauthId : memberId;
     }
 
     @Override

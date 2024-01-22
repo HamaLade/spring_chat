@@ -1,6 +1,6 @@
 package com.hs.chat.domain.service.login.oauth2;
 
-import com.hs.chat.domain.model.user.enums.SocialType;
+import com.hs.chat.domain.model.user.enums.OauthType;
 import com.hs.chat.domain.model.user.member.Member;
 import com.hs.chat.domain.repository.user.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +24,12 @@ public class MemberService {
         return memberRepository.existsMemberByMemberId(memberId);
     }
 
-    public boolean isExistSocialId(SocialType socialType, String socialId) {
-        return memberRepository.existsMemberBySocialId(socialType, socialId);
+    public boolean isExistSocialId(OauthType oauthType, String oauthId) {
+        return memberRepository.existsMemberByOauthId(oauthType, oauthId);
     }
 
-    public Member findBySocialId(SocialType socialType, String socialId) {
-        return memberRepository.findBySocialId(socialType, socialId).orElse(null);
+    public Member findBySocialId(OauthType oauthType, String oauthId) {
+        return memberRepository.findByOauthId(oauthType, oauthId).orElse(null);
     }
 
 }

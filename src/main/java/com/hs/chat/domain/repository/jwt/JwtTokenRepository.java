@@ -1,9 +1,7 @@
-package com.hs.chat.global.repository.jwt;
+package com.hs.chat.domain.repository.jwt;
 
-import com.hs.chat.global.model.jwt.JwtToken;
+import com.hs.chat.domain.model.jwt.JwtToken;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.Optional;
 
 public interface JwtTokenRepository extends JpaRepository<JwtToken, Long> {
 

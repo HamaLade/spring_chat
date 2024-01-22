@@ -41,6 +41,8 @@ dependencies {
 	implementation 'org.postgresql:postgresql'
 	runtimeOnly 'com.h2database:h2'
 
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
 	// test doc
 	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'

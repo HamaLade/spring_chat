@@ -1,4 +1,4 @@
-package com.hs.chat.global.common;
+package com.hs.chat.global.common.oauth;
 
 import com.hs.chat.global.properties.Oauth2Properties;
 import lombok.Builder;

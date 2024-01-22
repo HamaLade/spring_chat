@@ -1,4 +1,4 @@
-package com.hs.chat.global.model.jwt;
+package com.hs.chat.domain.model.jwt;
 
 import com.hs.chat.global.enums.UserType;
 import com.hs.chat.global.util.HttpServletUtil;

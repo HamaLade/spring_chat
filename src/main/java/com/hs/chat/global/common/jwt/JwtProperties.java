@@ -1,4 +1,4 @@
-package com.hs.chat.global.common;
+package com.hs.chat.global.common.jwt;
 
 
 import io.jsonwebtoken.io.Decoders;

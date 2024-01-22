@@ -1,7 +1,7 @@
 package com.hs.chat.domain.service.login.oauth2;
 
 import com.hs.chat.domain.exception.oauth.OauthException;
-import com.hs.chat.domain.model.user.enums.SocialType;
+import com.hs.chat.domain.model.user.enums.OauthType;
 import com.hs.chat.domain.model.user.member.Member;
 import com.hs.chat.global.service.jwt.TokenProvider;
 import com.hs.chat.global.util.AuthorityUtils;
@@ -22,7 +22,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.security.core.authority.AuthorityUtils.*;
+import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -49,7 +49,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
         ClientRegistration clientRegistration = userRequest.getClientRegistration();
         String registrationId = clientRegistration.getRegistrationId();
-        SocialType socialType = SocialType.of(registrationId);
+        OauthType socialType = OauthType.of(registrationId);
         String clientId = clientRegistration.getClientId();
         Member member = null;
 
@@ -79,12 +79,12 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
     private Member kakaoOauthProcess(String socialId) {
 
-        if (memberService.isExistSocialId(SocialType.KAKAO, socialId)) {
-            log.info("이미 가입된 회원입니다 제공사 : {}, 클라이언트 아이디 : {}", SocialType.KAKAO, "");
-            return memberService.findBySocialId(SocialType.KAKAO, socialId);
+        if (memberService.isExistSocialId(OauthType.KAKAO, socialId)) {
+            log.info("이미 가입된 회원입니다 제공사 : {}, 클라이언트 아이디 : {}", OauthType.KAKAO, "");
+            return memberService.findBySocialId(OauthType.KAKAO, socialId);
         } else {
-            log.info("회원가입을 진행합니다 제공사 : {}, 클라이언트 아이디 : {}", SocialType.KAKAO, "");
-            return memberService.save(new Member(SocialType.KAKAO, socialId));
+            log.info("회원가입을 진행합니다 제공사 : {}, 클라이언트 아이디 : {}", OauthType.KAKAO, "");
+            return memberService.save(new Member(OauthType.KAKAO, socialId));
         }
 
     }

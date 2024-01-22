@@ -1,4 +1,4 @@
-package com.hs.chat.global.model;
+package com.hs.chat.domain.model.file;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
