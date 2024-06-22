@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
@@ -87,8 +87,11 @@
 <div class="login-container">
     <h2>회원가입</h2>
     <form th:action="@{/signup}" method="post" class="login-form" onsubmit="return signUpValidate()">
-        <input type="text" name="username" placeholder="아이디" required maxlength="50">
+        <label for="username"></label>
+        <input type="text" id="username" name="username" placeholder="아이디" required maxlength="50">
+        <label for="password"></label>
         <input type="password" id="password" name="password" placeholder="비밀번호" required>
+        <label for="confirmPassword"></label>
         <input type="password" id="confirmPassword" name="confirmPassword" placeholder="비밀번호 확인" required>
         <button type="submit">가입신청</button>
         <div id="error-message" class="error-message"></div>
