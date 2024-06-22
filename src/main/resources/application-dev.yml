@@ -1,6 +1,0 @@
-#dev일 경우 sql 출력
-spring:
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: create

@@ -5,57 +5,46 @@ plugins {
 	id "org.asciidoctor.jvm.convert" version "3.3.2"
 }
 
-group = 'com.hs'
-version = '0.0.1-SNAPSHOT'
-
-java {
-	sourceCompatibility = '17'
-}
+bootJar.enabled = false // 멀티 모듈 빌드 시 모듈의 jar 파일 생성을 하지 않음
 
 ext {
-	snippetsDir = file('build/generated-snippets') // (5)
+	snippetsDir = file('build/generated-snippets')
 }
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
+subprojects { // 하위 모듈 통합 설정
+
+	group = 'com.hs'
+	version = '1.0.0'
+
+	apply plugin: 'java'
+	apply plugin: 'java-library'
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
+
+	java {
+		sourceCompatibility = '17'
 	}
-	asciidoctorExt
-}
 
-repositories {
-	mavenCentral()
-}
+	configurations {
+		compileOnly {
+			extendsFrom annotationProcessor
+		}
+		asciidoctorExt
+	}
 
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
-	implementation 'org.postgresql:postgresql'
-	runtimeOnly 'com.h2database:h2'
+	repositories {
+		mavenCentral()
+	}
 
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	dependencies {
+		implementation 'org.springframework.boot:spring-boot-starter'
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	}
 
-	// test doc
-	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
-	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	test {
+		useJUnitPlatform()
+	}
 
-	// JWT
-	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
-	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
-	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
-
-    // 웹소켓
-	implementation 'org.springframework.boot:spring-boot-starter-websocket'
-	implementation 'org.webjars:sockjs-client:1.1.2'
-	implementation 'org.webjars:stomp-websocket:2.3.3-1'
 }
 
 tasks.named('test') {
