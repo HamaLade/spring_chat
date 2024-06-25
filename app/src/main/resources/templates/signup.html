@@ -87,8 +87,10 @@
 <div class="login-container">
     <h2>회원가입</h2>
     <form th:action="@{/signup}" method="post" class="login-form" onsubmit="return signUpValidate()">
-        <label for="username"></label>
-        <input type="text" id="username" name="username" placeholder="아이디" required maxlength="50">
+        <label for="loginId"></label>
+        <input type="text" id="loginId" name="loginId" placeholder="아이디" required maxlength="50">
+        <label for="nickname"></label>
+        <input type="text" id="nickname" name="nickname" placeholder="닉네임" required maxlength="50">
         <label for="password"></label>
         <input type="password" id="password" name="password" placeholder="비밀번호" required>
         <label for="confirmPassword"></label>
