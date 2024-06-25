@@ -17,7 +17,7 @@ public class MemberJwtConfig {
             @Value("${jwt.member.access.secret}") String accessTokenSecret,
             @Value("${jwt.member.refresh.secret}") String refreshTokenSecret,
             @Value("${jwt.member.access.exp}")long accessTokenExpiredTime,
-            @Value("${jwt.member.access.exp}")long refreshTokenExpiredTime
+            @Value("${jwt.member.refresh.exp}")long refreshTokenExpiredTime
     ) {
         this.accessTokenSecret = accessTokenSecret;
         this.refreshTokenSecret = refreshTokenSecret;
