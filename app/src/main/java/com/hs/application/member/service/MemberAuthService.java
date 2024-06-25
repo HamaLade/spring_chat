@@ -51,7 +51,7 @@ public class MemberAuthService implements AuthService {
 
         String accessToken = Jwts.builder()
                 .setHeader(MemberJwtProperties.ACCESS_TOKEN_DEFAULT_HEADER)
-                .setClaims(memberJwtProperties.getAccessTokenClaims(member, accessTokenExpireTime))
+                .setClaims(memberJwtProperties.getAccessTokenClaims(member))
                 .setIssuedAt(Date.from(instant))
                 .setExpiration(Date.from(Instant.ofEpochSecond(accessTokenExpireTime)))
                 .signWith(memberJwtProperties.getAccessKey(), SignatureAlgorithm.HS256)
@@ -67,7 +67,7 @@ public class MemberAuthService implements AuthService {
 
         String refreshToken = Jwts.builder()
                 .setHeader(MemberJwtProperties.REFRESH_TOKEN_DEFAULT_HEADER)
-                .setClaims(memberJwtProperties.getRefreshTokenClaims(member, refreshTokenExpireTime))
+                .setClaims(memberJwtProperties.getRefreshTokenClaims(member))
                 .setIssuedAt(Date.from(instant))
                 .setExpiration(Date.from(Instant.ofEpochSecond(refreshTokenExpireTime)))
                 .signWith(memberJwtProperties.getRefreshKey(), SignatureAlgorithm.HS512)

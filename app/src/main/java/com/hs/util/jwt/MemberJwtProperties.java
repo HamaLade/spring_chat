@@ -52,7 +52,7 @@ public final class MemberJwtProperties {
         this.refreshKey = Keys.hmacShaKeyFor(refreshTokenSecret.getBytes());
     }
 
-    public Map<String, Object> getAccessTokenClaims(Member member, long accessTokenExpiredTime) {
+    public Map<String, Object> getAccessTokenClaims(Member member) {
         return Map.of(
                 USER_ID, member.getId(),
                 ROLE, member.getRole().name(),
@@ -60,7 +60,7 @@ public final class MemberJwtProperties {
         );
     }
 
-    public Map<String, Object> getRefreshTokenClaims(Member member, long accessTokenExpiredTime) {
+    public Map<String, Object> getRefreshTokenClaims(Member member) {
         return Map.of(
                 USER_ID, member.getId(),
                 EXPIRED, Instant.now().plusMillis(refreshTokenExpiredTime).getEpochSecond()
