@@ -1,4 +1,4 @@
-package com.hs.presentation;
+package com.hs.application;
 
 public class ApplicationException extends RuntimeException {
     public ApplicationException(String message) {

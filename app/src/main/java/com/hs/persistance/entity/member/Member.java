@@ -1,8 +1,6 @@
-package com.hs.persistance.member;
+package com.hs.persistance.entity.member;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +18,7 @@ public class Member {
      * 회원 식별자
      */
     @Id
+    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long id;
 
     /**
@@ -31,7 +30,7 @@ public class Member {
     /**
      * 회원 닉네임
      */
-    @Column(nullable = false, length = 50, columnDefinition = "VARCHAR")
+    @Column(unique = true, nullable = false, length = 50, columnDefinition = "VARCHAR")
     private String nickname;
 
     /**
@@ -44,6 +43,13 @@ public class Member {
      * 회원 권한
      * MemberRole Enum 참조
      */
+    @Enumerated(EnumType.STRING)
     private MemberRole role;
 
+    public Member(String loginId, String nickname, String password) {
+        this.loginId = loginId;
+        this.nickname = nickname;
+        this.password = password;
+        this.role = MemberRole.ROLE_USER;
+    }
 }

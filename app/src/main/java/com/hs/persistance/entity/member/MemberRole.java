@@ -1,4 +1,4 @@
-package com.hs.persistance.member;
+package com.hs.persistance.entity.member;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
