@@ -1,13 +1,12 @@
 package com.hs.application.member.model;
 
-import lombok.RequiredArgsConstructor;
+import com.hs.persistance.entity.member.Member;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
 
-@RequiredArgsConstructor
 public class MemberUserDetails implements UserDetails {
 
     private final Long id;
@@ -20,7 +19,7 @@ public class MemberUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return "";
     }
 
     @Override
@@ -47,4 +46,10 @@ public class MemberUserDetails implements UserDetails {
     public boolean isEnabled() {
         return false;
     }
+
+    public MemberUserDetails(Member member) {
+        this.id = member.getId();
+        this.role = String.valueOf(member.getRole());
+    }
+
 }

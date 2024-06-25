@@ -1,5 +1,7 @@
 package com.hs.presentation.controller;
 
+import com.hs.application.member.model.MemberUserDetails;
+import com.hs.util.member.MemberUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +20,7 @@ public class HomeController {
      */
     @GetMapping("/")
     public String home() {
+        MemberUserDetails memberUserDetails = MemberUtils.getMemberUserDetails();
         return "home";
     }
 

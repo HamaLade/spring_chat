@@ -1,6 +1,8 @@
 package com.hs.util.jwt;
 
 import com.hs.persistance.entity.member.Member;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
 
@@ -23,6 +25,9 @@ public final class MemberJwtProperties {
     public final long accessTokenExpiredTime;
     public final long refreshTokenExpiredTime;
 
+    public final JwtParser accessParser;
+    public final JwtParser refreshParser;
+
     // Access Token
     public static final String ACCESS_TOKEN_NAME = "Authorization";
     public static final String ACCESS_TOKEN_PREFIX = "Bearer ";
@@ -37,8 +42,6 @@ public final class MemberJwtProperties {
     public static final String ROLE = "role";
     public static final String EXPIRED = "exp";
 
-
-
     // token default header
     public static final Map<String, Object> ACCESS_TOKEN_DEFAULT_HEADER = Map.of("typ", "JWT", "alg", "HS256");
     public static final Map<String, Object> REFRESH_TOKEN_DEFAULT_HEADER = Map.of("typ", "JWT", "alg", "HS512");
@@ -50,19 +53,21 @@ public final class MemberJwtProperties {
         this.refreshTokenExpiredTime = refreshTokenExpiredTime;
         this.accessKey = Keys.hmacShaKeyFor(accessTokenSecret.getBytes());
         this.refreshKey = Keys.hmacShaKeyFor(refreshTokenSecret.getBytes());
+        this.accessParser = Jwts.parserBuilder().setSigningKey(accessKey).build();
+        this.refreshParser = Jwts.parserBuilder().setSigningKey(refreshKey).build();
     }
 
     public Map<String, Object> getAccessTokenClaims(Member member) {
         return Map.of(
-                USER_ID, member.getId(),
+                USER_ID, member.getId().toString(),
                 ROLE, member.getRole().name(),
-                EXPIRED, accessTokenExpiredTime
+                EXPIRED, String.valueOf(Instant.now().plusMillis(refreshTokenExpiredTime).getEpochSecond())
         );
     }
 
     public Map<String, Object> getRefreshTokenClaims(Member member) {
         return Map.of(
-                USER_ID, member.getId(),
+                USER_ID, member.getId().toString(),
                 EXPIRED, Instant.now().plusMillis(refreshTokenExpiredTime).getEpochSecond()
         );
     }

@@ -19,4 +19,4 @@ jwt:
       exp: 300
     refresh:
       secret: memberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecret
-      exp: 600
+      exp: 10800
