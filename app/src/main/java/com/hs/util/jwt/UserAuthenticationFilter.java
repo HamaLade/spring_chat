@@ -27,8 +27,7 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (authorizationHeader != null) {
-            String removedAccessTokenPrefix = JwtUtils.removeAccessTokenPrefix(authorizationHeader);
-            userDetails = memberAuthService.authorization(removedAccessTokenPrefix);
+            userDetails = memberAuthService.authorization();
         } else if (JwtUtils.existsRefreshTokenCookie()) {
             Cookie refreshTokenCookie = JwtUtils.findRefreshTokenCookie();
             userDetails = memberAuthService.refreshTokenAuthorization(refreshTokenCookie.getValue());

@@ -1,0 +1,45 @@
+package com.hs.presentation;
+
+import lombok.Getter;
+
+@Getter
+public class ResponseMessage {
+
+    private final String message;
+    private final Object data;
+    private final ErrorInfo error;
+
+    public ResponseMessage(String message, Object data, ErrorInfo error) {
+        this.message = message;
+        this.data = data;
+        this.error = error;
+    }
+
+    public ResponseMessage(String message, Object data) {
+        this(message, data, null);
+    }
+
+    public ResponseMessage(String message, ErrorInfo error) {
+        this(message, null, error);
+    }
+
+    public ResponseMessage(String message) {
+        this(message, null, null);
+    }
+
+    @Getter
+    public static class ErrorInfo {
+        private final String message;
+        private final int code;
+        private final int status;
+        private final String description;
+
+        public ErrorInfo(String message, int code, int status, String description) {
+            this.message = message;
+            this.code = code;
+            this.status = status;
+            this.description = description;
+        }
+    }
+
+}

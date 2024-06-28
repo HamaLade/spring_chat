@@ -57,18 +57,58 @@
         .login-form button:hover {
             background-color: #303f9f;
         }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+            text-align: center;
+        }
     </style>
+
 </head>
 <body>
 <div class="login-container">
     <h2>로그인</h2>
-    <form th:action="@{/login}" method="post" class="login-form">
+    <form class="login-form">
         <label for="loginId"></label>
         <input type="text" id="loginId" name="loginId" placeholder="아이디" required>
         <label for="password"></label>
         <input type="password" id="password" name="password" placeholder="비밀번호" required>
         <button type="submit">로그인</button>
+        <div id="error-message" class="error-message"></div>
     </form>
 </div>
 </body>
+<script>
+    document.querySelector('.login-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        let loginId = document.getElementById('loginId').value;
+        let password = document.getElementById('password').value;
+
+        if (!loginId || !password) {
+            document.getElementById('error-message').innerText = '아이디와 비밀번호를 입력해주세요.';
+            return;
+        }
+
+        fetch('/member/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                loginId: loginId,
+                password: password
+            })
+        }).then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            if (json.error) {
+                document.getElementById('error-message').innerText = json.error.message;
+                return;
+            }
+
+            location.href = '/';
+        });
+    });
+</script>
 </html>

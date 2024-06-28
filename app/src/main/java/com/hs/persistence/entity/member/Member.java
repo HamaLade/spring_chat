@@ -1,9 +1,13 @@
-package com.hs.persistance.entity.member;
+package com.hs.persistence.entity.member;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 /**
  * 회원 Entity
@@ -11,6 +15,8 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Getter
+@Table(name = "member")
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
 
@@ -43,8 +49,16 @@ public class Member {
      * 회원 권한
      * MemberRole Enum 참조
      */
+    @Column(length = 30, columnDefinition = "VARCHAR")
     @Enumerated(EnumType.STRING)
     private MemberRole role;
+
+    /**
+     * 회원 생성일
+     */
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdDate;
 
     public Member(String loginId, String nickname, String password) {
         this.loginId = loginId;

@@ -1,6 +1,6 @@
 package com.hs.application.member.model;
 
-import com.hs.persistance.entity.member.Member;
+import com.hs.persistence.entity.member.Member;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

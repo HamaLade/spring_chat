@@ -1,6 +1,6 @@
 package com.hs.util.jwt;
 
-import com.hs.persistance.entity.member.Member;
+import com.hs.persistence.entity.member.Member;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -29,8 +29,7 @@ public final class MemberJwtProperties {
     public final JwtParser refreshParser;
 
     // Access Token
-    public static final String ACCESS_TOKEN_NAME = "Authorization";
-    public static final String ACCESS_TOKEN_PREFIX = "Bearer ";
+    public static final String ACCESS_TOKEN_NAME = "accessToken";
     public static final long ACCESS_TOKEN_EXPIRED_TIME = 1000 * 60 * 20;
 
     // Refresh Token

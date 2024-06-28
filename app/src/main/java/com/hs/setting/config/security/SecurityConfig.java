@@ -32,6 +32,8 @@ public class SecurityConfig {
                                 authorizeRequest.anyRequest().permitAll()
                 )
                 .addFilterBefore(new UserAuthenticationFilter(memberAuthService), UsernamePasswordAuthenticationFilter.class)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
         ;
         return http.build();
     }

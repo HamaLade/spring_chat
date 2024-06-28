@@ -7,16 +7,25 @@ import java.util.Arrays;
 
 public class JwtUtils {
 
-    public static String addAccessTokenPrefix(String token) {
-        return MemberJwtProperties.ACCESS_TOKEN_PREFIX + token;
-    }
+    public static Cookie findAccessTokenCookie() {
+        Cookie[] cookies = HttpServletUtils.getHttpServletRequest().getCookies();
 
-    public static String removeAccessTokenPrefix(String token) {
-        return token.replace(MemberJwtProperties.ACCESS_TOKEN_PREFIX, "");
+        if (cookies == null || cookies.length == 0) {
+            return null;
+        }
+
+        return Arrays.stream(cookies)
+                .filter(cookie -> cookie.getName().equals(MemberJwtProperties.ACCESS_TOKEN_NAME))
+                .findAny()
+                .orElse(null);
     }
 
     public static Cookie findRefreshTokenCookie() {
         Cookie[] cookies = HttpServletUtils.getHttpServletRequest().getCookies();
+
+        if (cookies == null || cookies.length == 0) {
+            return null;
+        }
 
         return Arrays.stream(cookies)
                 .filter(cookie -> cookie.getName().equals(MemberJwtProperties.REFRESH_TOKEN_NAME))

@@ -2,21 +2,26 @@ package com.hs.application.member.service;
 
 
 import com.hs.application.auth.AuthService;
+import com.hs.application.member.dto.MemberAuthInfo;
 import com.hs.application.member.exception.AuthorizationFailed;
 import com.hs.application.member.exception.LoginFailedException;
+import com.hs.application.member.exception.LoginInfoNotMatched;
 import com.hs.application.member.exception.SignUpFailedException;
 import com.hs.application.member.model.MemberUserDetails;
-import com.hs.persistance.entity.member.Member;
-import com.hs.persistance.repository.memeber.MemberRepository;
+import com.hs.persistence.entity.member.Member;
+import com.hs.persistence.repository.memeber.MemberRepository;
 import com.hs.util.jwt.JwtUtils;
 import com.hs.util.jwt.MemberJwtProperties;
+import com.hs.util.jwt.TokenInfo;
 import com.hs.util.web.HttpServletUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +30,10 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.Date;
 
+/**
+ * 회원 인증 서비스
+ */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberAuthService implements AuthService {
@@ -33,40 +42,66 @@ public class MemberAuthService implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final MemberJwtProperties memberJwtProperties;
 
-    public void login(String loginId, String password) {
-        Member member = memberRepository.findByLoginId(loginId)
-                .orElseThrow(LoginFailedException::new);
+    /**
+     * 로그인
+     * 로그인 성공 시 accessToken, refreshToken을 발급
+     *
+     * @param loginId 로그인 아이디
+     * @param password 비밀번호
+     * @return 실패 시 에러 메시지, 성공 시 null (에러 메세지는 예외의 메세지를 반환하도록 처리)
+     */
+    public MemberAuthInfo login(String loginId, String password) {
+            Member member = memberRepository.findByLoginId(loginId)
+                    .orElseThrow(LoginInfoNotMatched::new);
 
-        if (passwordEncoder.matches(password, member.getPassword())) {
+            if (passwordEncoder.matches(password, member.getPassword())) {
 
-            Instant now = Instant.now();
+                Instant now = Instant.now();
 
-            generateAccessToken(member, now);
-            generateRefreshToken(member, now);
-
-            return;
-        }
-
-        throw new LoginFailedException();
+                TokenInfo accessToken = generateAccessToken(member, now);
+                TokenInfo refreshToken = generateRefreshToken(member, now);
+                return new MemberAuthInfo(accessToken, refreshToken);
+            } else {
+                throw new LoginInfoNotMatched();
+            }
     }
 
-    private void generateAccessToken(Member member, Instant instant) {
+    /**
+     * accessToken 발급
+     *
+     * @param member 회원 정보
+     * @param instant 현재 시간
+     * @return tokenInfo
+     */
+    private TokenInfo generateAccessToken(Member member, Instant instant) {
 
         long accessTokenExpireTime = instant.plusSeconds(memberJwtProperties.accessTokenExpiredTime).getEpochSecond();
 
-        String accessToken = JwtUtils.addAccessTokenPrefix(Jwts.builder()
+        String accessToken = Jwts.builder()
                 .setHeader(MemberJwtProperties.ACCESS_TOKEN_DEFAULT_HEADER)
                 .setClaims(memberJwtProperties.getAccessTokenClaims(member))
                 .setIssuedAt(Date.from(instant))
                 .setExpiration(Date.from(Instant.ofEpochSecond(accessTokenExpireTime)))
                 .signWith(memberJwtProperties.getAccessKey(), SignatureAlgorithm.HS256)
-                .compact());
+                .compact();
 
-        HttpServletUtils.getHttpServletRequest().setAttribute("Authorization", accessToken);
+        Cookie accessTokenCookie = new Cookie(MemberJwtProperties.ACCESS_TOKEN_NAME, accessToken);
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setMaxAge((int) memberJwtProperties.accessTokenExpiredTime);
+        accessTokenCookie.setPath("/");
 
+        HttpServletUtils.getHttpServletResponse().addCookie(accessTokenCookie);
+
+        return new TokenInfo(accessToken, accessTokenExpireTime);
     }
 
-    private void generateRefreshToken(Member member, Instant instant) {
+    /**
+     * refreshToken 발급
+     * @param member 회원 정보
+     * @param instant 현재 시간
+     * @return tokenInfo
+     */
+    private TokenInfo generateRefreshToken(Member member, Instant instant) {
 
         long refreshTokenExpireTime = instant.plusSeconds(memberJwtProperties.refreshTokenExpiredTime).getEpochSecond();
 
@@ -78,13 +113,49 @@ public class MemberAuthService implements AuthService {
                 .signWith(memberJwtProperties.getRefreshKey(), SignatureAlgorithm.HS512)
                 .compact();
 
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+        Cookie refreshTokenCookie = new Cookie(MemberJwtProperties.REFRESH_TOKEN_NAME, refreshToken);
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setMaxAge((int) memberJwtProperties.refreshTokenExpiredTime);
         refreshTokenCookie.setPath("/");
         HttpServletUtils.getHttpServletResponse().addCookie(refreshTokenCookie);
+
+        return new TokenInfo(refreshToken, refreshTokenExpireTime);
     }
 
+    /**
+     * 로그아웃
+     * access & refreshToken 쿠키 제거
+     */
+    public void logout() {
+
+        HttpServletResponse response = HttpServletUtils.getHttpServletResponse();
+
+        Cookie accessTokenCookie = new Cookie(MemberJwtProperties.ACCESS_TOKEN_NAME, null);
+        // 토큰 생성시의 쿠키속성과 속성들이 일치해야 적용된다
+        accessTokenCookie.setMaxAge(0);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setHttpOnly(true);
+        response.addCookie(accessTokenCookie);
+
+        Cookie refreshTokenCookie = new Cookie(MemberJwtProperties.REFRESH_TOKEN_NAME, null);
+        refreshTokenCookie.setMaxAge(0);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setHttpOnly(true);
+        response.addCookie(refreshTokenCookie);
+    }
+
+    /**
+     * 회원가입
+     * 중복 검사 후 회원가입
+     *
+     * @throws SignUpFailedException 회원가입 실패
+     * @throws AuthorizationFailed 인증 실패
+     * @throws LoginFailedException 로그인 실패
+     * @throws LoginInfoNotMatched 로그인 정보 불일치
+     * @param loginId 로그인 아이디
+     * @param nickName 닉네임
+     * @param password 비밀번호
+     */
     public void signUp(String loginId, String nickName, String password) {
 
         // 아이디 중복 검사
@@ -109,9 +180,21 @@ public class MemberAuthService implements AuthService {
         memberRepository.save(member);
     }
 
-    public UserDetails authorization(String accessToken) {
+    /**
+     * 인증
+     * accessToken, refreshToken 중 하나라도 유효하면 인증 성공
+     *
+     * @return UserDetails (인증 실패 시 null)
+     */
+    public UserDetails authorization() {
 
-        UserDetails userDetails = accessTokenAuthorization(accessToken);
+        UserDetails userDetails = null;
+        Cookie accessTokenCookie = JwtUtils.findAccessTokenCookie();
+
+        if (accessTokenCookie != null) {
+            userDetails = accessTokenAuthorization(accessTokenCookie.getValue());
+        }
+
         if (userDetails != null) {
             return userDetails;
         }
@@ -119,12 +202,25 @@ public class MemberAuthService implements AuthService {
         Cookie refreshTokenCookie = JwtUtils.findRefreshTokenCookie();
 
         if (refreshTokenCookie != null) {
-            return refreshTokenAuthorization(refreshTokenCookie.getValue());
+            userDetails = refreshTokenAuthorization(refreshTokenCookie.getValue());
         }
 
+        if (userDetails != null) {
+            memberRepository.findById(Long.valueOf(userDetails.getUsername())).ifPresent(member -> {
+                // accessToken 재발급, ifPresent는 get()의 경고를 없애기 위해 사용 (현 상황에서는 동시성 이슈를 제외하면 Member Entity는 위에서 이미 조회했기 때문에 null일 수 없다)
+                generateAccessToken(member, Instant.now());
+            });
+            return userDetails;
+        }
         return null;
     }
 
+    /**
+     * accessToken 인증
+     *
+     * @param accessToken accessToken
+     * @return UserDetails (인증 실패 시 null)
+     */
     public UserDetails accessTokenAuthorization(String accessToken) {
         try {
             Jws<Claims> claims = memberJwtProperties.accessParser.parseClaimsJws(accessToken);
@@ -137,6 +233,12 @@ public class MemberAuthService implements AuthService {
         }
     }
 
+    /**
+     * refreshToken 인증
+     *
+     * @param refreshToken refreshToken
+     * @return UserDetails (인증 실패 시 null)
+     */
     public UserDetails refreshTokenAuthorization(String refreshToken) {
         try {
             Jws<Claims> claims = memberJwtProperties.refreshParser.parseClaimsJws(refreshToken);
@@ -149,10 +251,15 @@ public class MemberAuthService implements AuthService {
         }
     }
 
+    /**
+     * UserDetails 로드 (사실상 사용하지 않음)
+     *
+     * @param username username
+     * @return UserDetails
+     * @throws UsernameNotFoundException usernameNotFoundException
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return null;
     }
-
-
 }
