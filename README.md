@@ -1,1 +1,1 @@
-[웹 페이지 API](https://github.com/HamaLade/spring_chat/docs/app/main.html)
+[웹 페이지 API](https://hamalade.github.io/spring_chat/app/main.html)
