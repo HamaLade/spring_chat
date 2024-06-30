@@ -9,9 +9,10 @@ public class ApiPaths {
     public static final String HOME = "/";
 
     // member
-    public static final String MEMBER_LOGIN = "/member/login";
-    public static final String MEMBER_SIGNUP = "/member/signup";
-    public static final String MEMBER_LOGOUT = "/member/logout";
-    public static final String MEMBER_WITHDRAW = "/member/withdraw";
+    public static final String MEMBER_ROOT_PATH = "/members";
+    public static final String MEMBER_LOGIN = MEMBER_ROOT_PATH + "/login";
+    public static final String MEMBER_SIGNUP = MEMBER_ROOT_PATH + "/signup";
+    public static final String MEMBER_LOGOUT = MEMBER_ROOT_PATH + "/logout";
+    public static final String MEMBER_WITHDRAW = MEMBER_ROOT_PATH + "/withdraw";
 
 }

@@ -1,4 +1,4 @@
-package com.hs.util.jwt;
+package com.hs.utils.jwt;
 
 import com.hs.persistence.entity.member.Member;
 import io.jsonwebtoken.JwtParser;
@@ -60,14 +60,14 @@ public final class MemberJwtProperties {
         return Map.of(
                 USER_ID, member.getId().toString(),
                 ROLE, member.getRole().name(),
-                EXPIRED, String.valueOf(Instant.now().plusMillis(refreshTokenExpiredTime).getEpochSecond())
+                EXPIRED, String.valueOf(Instant.now().plusMillis(getRefreshTokenExpiredTime()).getEpochSecond())
         );
     }
 
     public Map<String, Object> getRefreshTokenClaims(Member member) {
         return Map.of(
                 USER_ID, member.getId().toString(),
-                EXPIRED, Instant.now().plusMillis(refreshTokenExpiredTime).getEpochSecond()
+                EXPIRED, Instant.now().plusMillis(getRefreshTokenExpiredTime()).getEpochSecond()
         );
     }
 

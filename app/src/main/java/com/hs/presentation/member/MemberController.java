@@ -39,7 +39,8 @@ public class MemberController {
             return ResponseEntity.ok(new ResponseMessage("ok", memberAuthInfo));
         } catch (Exception e) {
             log.error("login failed", e);
-            return ResponseEntity.ok(new ResponseMessage("error", new ResponseMessage.ErrorInfo(e.getMessage(), Errors.LOGIN_FAILED.getCode(), Errors.LOGIN_FAILED.getStatus(), "로그인 실패")));
+            Errors error = Errors.LOGIN_FAILED;
+            return ResponseMessage.errorResponseEntity(error, "로그인 실패", e);
         }
     }
 
@@ -60,13 +61,19 @@ public class MemberController {
      * @return 회원가입 성공 시 인덱스 페이지로 리다이렉트
      */
     @PostMapping(ApiPaths.MEMBER_SIGNUP)
-    public String signupProcess(@RequestBody MemberSignUpRequestDto memberSignUpRequestDto) {
-        memberAuthService.signUp(
-                memberSignUpRequestDto.getLoginId(),
-                memberSignUpRequestDto.getNickname(),
-                memberSignUpRequestDto.getPassword()
-        );
-        return "redirect:/home";
+    public ResponseEntity<ResponseMessage> signupProcess(@RequestBody MemberSignUpRequestDto memberSignUpRequestDto) {
+        try {
+            memberAuthService.signUp(
+                    memberSignUpRequestDto.getLoginId(),
+                    memberSignUpRequestDto.getNickname(),
+                    memberSignUpRequestDto.getPassword()
+            );
+            return ResponseEntity.ok(new ResponseMessage("ok", null));
+        } catch (Exception e) {
+            log.error("signup failed", e);
+            Errors error = Errors.SIGNUP_FAILED;
+            return ResponseMessage.errorResponseEntity(error, "회원가입 실패", e);
+        }
     }
 
     /**

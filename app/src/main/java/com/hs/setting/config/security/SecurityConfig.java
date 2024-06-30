@@ -1,7 +1,7 @@
 package com.hs.setting.config.security;
 
 import com.hs.application.member.service.MemberAuthService;
-import com.hs.util.jwt.UserAuthenticationFilter;
+import com.hs.utils.jwt.UserAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

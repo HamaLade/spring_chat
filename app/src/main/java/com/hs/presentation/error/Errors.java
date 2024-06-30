@@ -24,7 +24,10 @@ public enum Errors {
     EMPTY_PASSWORD("비밀번호를 입력해주세요.", 1003, 400),
 
     // 로그인 실패
-    LOGIN_FAILED("로그인에 실패했습니다.", 1004, 400)
+    LOGIN_FAILED("로그인에 실패했습니다.", 1004, 400),
+
+    // 회원 가입 실패
+    SIGNUP_FAILED("회원가입에 실패했습니다.", 1005, 400)
 
     ;
 

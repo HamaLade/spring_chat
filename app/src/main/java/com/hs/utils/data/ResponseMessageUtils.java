@@ -1,4 +1,4 @@
-package com.hs.util.data;
+package com.hs.utils.data;
 
 public class ResponseMessageUtils {
 }

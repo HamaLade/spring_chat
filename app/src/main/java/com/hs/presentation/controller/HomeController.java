@@ -1,8 +1,6 @@
 package com.hs.presentation.controller;
 
-import com.hs.application.member.model.MemberUserDetails;
 import com.hs.presentation.ApiPaths;
-import com.hs.util.member.MemberUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

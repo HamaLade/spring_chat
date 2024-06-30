@@ -1,0 +1,38 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+= CHAT
+:doctype: book
+:toc: left
+:sectnums:
+:toclevels: 5
+:source-highlighter: highlightjs
+
+= link:main.html[main]
+
+== 비 로그인 상태
+=== 회원가입
+Request
+include::{snippets}/members-sign-up/http-request.adoc[]
+RequestFields
+include::{snippets}/members-sign-up/request-fields.adoc[]
+Response
+include::{snippets}/members-sign-up/http-response.adoc[]
+ResponseFields
+include::{snippets}/members-sign-up/response-fields.adoc[]
+
+==== 회원가입 오류상황
+Request
+include::{snippets}/members-sign-up-failed/http-request.adoc[]
+RequestFields
+include::{snippets}/members-sign-up-failed/request-fields.adoc[]
+Response
+include::{snippets}/members-sign-up-failed/http-response.adoc[]
+ResponseFields
+include::{snippets}/members-sign-up-failed/response-fields.adoc[]
+
+=== 로그인
+
+== 로그인 상태
+

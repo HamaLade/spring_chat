@@ -10,10 +10,10 @@ import com.hs.application.member.exception.SignUpFailedException;
 import com.hs.application.member.model.MemberUserDetails;
 import com.hs.persistence.entity.member.Member;
 import com.hs.persistence.repository.memeber.MemberRepository;
-import com.hs.util.jwt.JwtUtils;
-import com.hs.util.jwt.MemberJwtProperties;
-import com.hs.util.jwt.TokenInfo;
-import com.hs.util.web.HttpServletUtils;
+import com.hs.utils.jwt.JwtUtils;
+import com.hs.utils.jwt.MemberJwtProperties;
+import com.hs.utils.jwt.TokenInfo;
+import com.hs.utils.web.HttpServletUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -75,7 +75,7 @@ public class MemberAuthService implements AuthService {
      */
     private TokenInfo generateAccessToken(Member member, Instant instant) {
 
-        long accessTokenExpireTime = instant.plusSeconds(memberJwtProperties.accessTokenExpiredTime).getEpochSecond();
+        long accessTokenExpireTime = instant.plusSeconds(memberJwtProperties.getAccessTokenExpiredTime()).getEpochSecond();
 
         String accessToken = Jwts.builder()
                 .setHeader(MemberJwtProperties.ACCESS_TOKEN_DEFAULT_HEADER)
@@ -87,7 +87,7 @@ public class MemberAuthService implements AuthService {
 
         Cookie accessTokenCookie = new Cookie(MemberJwtProperties.ACCESS_TOKEN_NAME, accessToken);
         accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setMaxAge((int) memberJwtProperties.accessTokenExpiredTime);
+        accessTokenCookie.setMaxAge((int) memberJwtProperties.getAccessTokenExpiredTime());
         accessTokenCookie.setPath("/");
 
         HttpServletUtils.getHttpServletResponse().addCookie(accessTokenCookie);
@@ -103,7 +103,7 @@ public class MemberAuthService implements AuthService {
      */
     private TokenInfo generateRefreshToken(Member member, Instant instant) {
 
-        long refreshTokenExpireTime = instant.plusSeconds(memberJwtProperties.refreshTokenExpiredTime).getEpochSecond();
+        long refreshTokenExpireTime = instant.plusSeconds(memberJwtProperties.getRefreshTokenExpiredTime()).getEpochSecond();
 
         String refreshToken = Jwts.builder()
                 .setHeader(MemberJwtProperties.REFRESH_TOKEN_DEFAULT_HEADER)
@@ -115,7 +115,7 @@ public class MemberAuthService implements AuthService {
 
         Cookie refreshTokenCookie = new Cookie(MemberJwtProperties.REFRESH_TOKEN_NAME, refreshToken);
         refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setMaxAge((int) memberJwtProperties.refreshTokenExpiredTime);
+        refreshTokenCookie.setMaxAge((int) memberJwtProperties.getRefreshTokenExpiredTime());
         refreshTokenCookie.setPath("/");
         HttpServletUtils.getHttpServletResponse().addCookie(refreshTokenCookie);
 
@@ -223,12 +223,13 @@ public class MemberAuthService implements AuthService {
      */
     public UserDetails accessTokenAuthorization(String accessToken) {
         try {
-            Jws<Claims> claims = memberJwtProperties.accessParser.parseClaimsJws(accessToken);
+            Jws<Claims> claims = memberJwtProperties.getAccessParser().parseClaimsJws(accessToken);
             Member member = memberRepository.findById(Long.parseLong((String) claims.getBody().get(MemberJwtProperties.USER_ID)))
                     .orElseThrow(AuthorizationFailed::new);
 
             return new MemberUserDetails(member);
         } catch (Exception e) {
+            log.error("accessTokenAuthorization error", e);
             return null;
         }
     }
@@ -241,12 +242,13 @@ public class MemberAuthService implements AuthService {
      */
     public UserDetails refreshTokenAuthorization(String refreshToken) {
         try {
-            Jws<Claims> claims = memberJwtProperties.refreshParser.parseClaimsJws(refreshToken);
+            Jws<Claims> claims = memberJwtProperties.getRefreshParser().parseClaimsJws(refreshToken);
             Member member = memberRepository.findById(Long.parseLong((String) claims.getBody().get(MemberJwtProperties.USER_ID)))
                     .orElseThrow(AuthorizationFailed::new);
 
             return new MemberUserDetails(member);
         } catch (Exception e) {
+            log.error("refreshTokenAuthorization error", e);
             return null;
         }
     }

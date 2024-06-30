@@ -1,6 +1,6 @@
-package com.hs.util.jwt;
+package com.hs.utils.jwt;
 
-import com.hs.util.web.HttpServletUtils;
+import com.hs.utils.web.HttpServletUtils;
 import jakarta.servlet.http.Cookie;
 
 import java.util.Arrays;

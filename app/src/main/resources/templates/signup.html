@@ -100,7 +100,6 @@
     </form>
 </div>
 <script>
-    // 회원 가입 요청 /member/signup으로
     document.querySelector('.signup-form').addEventListener('submit', function (event) {
         event.preventDefault();
         let loginId = document.getElementById('loginId').value;
@@ -113,7 +112,7 @@
             return;
         }
 
-        fetch('/member/signup', {
+        fetch('/members/signup', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -126,7 +125,7 @@
         }).then(function (response) {
             if (response.ok) {
                 alert('회원가입이 완료되었습니다.');
-                window.location.href = '/member/login';
+                window.location.href = '/members/login';
             } else {
                 document.getElementById('error-message').innerText = '회원가입에 실패했습니다.';
             }

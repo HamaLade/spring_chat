@@ -1,6 +1,8 @@
 package com.hs.presentation;
 
+import com.hs.presentation.error.Errors;
 import lombok.Getter;
+import org.springframework.http.ResponseEntity;
 
 @Getter
 public class ResponseMessage {
@@ -40,6 +42,10 @@ public class ResponseMessage {
             this.status = status;
             this.description = description;
         }
+    }
+
+    public static ResponseEntity<ResponseMessage> errorResponseEntity(Errors error, String message, Exception e) {
+        return ResponseEntity.status(error.getStatus()).body(new ResponseMessage("error", new ErrorInfo(error.getMessage(), error.getCode(), error.getStatus(), e.getMessage())));
     }
 
 }

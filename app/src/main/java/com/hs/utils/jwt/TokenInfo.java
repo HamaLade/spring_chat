@@ -1,4 +1,4 @@
-package com.hs.util.jwt;
+package com.hs.utils.jwt;
 
 import lombok.Getter;
 

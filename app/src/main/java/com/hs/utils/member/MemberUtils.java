@@ -1,4 +1,4 @@
-package com.hs.util.member;
+package com.hs.utils.member;
 
 import com.hs.application.member.model.MemberUserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
