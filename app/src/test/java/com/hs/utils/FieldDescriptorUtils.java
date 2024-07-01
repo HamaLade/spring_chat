@@ -12,7 +12,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.subsecti
 
 public class FieldDescriptorUtils {
 
-    public static FieldDescriptor[] reponseMessageFieldDescriptor(FieldDescriptor[] data, String dataDescription) {
+    public static FieldDescriptor[] reponseMessageFieldDescriptor(String dataDescription, FieldDescriptor... data) {
         List<FieldDescriptor> fieldDescriptors = new ArrayList<>();
         fieldDescriptors.add(fieldWithPath("message").description("응답 메시지"));
         fieldDescriptors.add(subsectionWithPath("data").optional().description(dataDescription));

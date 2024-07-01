@@ -127,7 +127,9 @@
                 alert('회원가입이 완료되었습니다.');
                 window.location.href = '/members/login';
             } else {
-                document.getElementById('error-message').innerText = '회원가입에 실패했습니다.';
+                return response.json().then(function (json) {
+                    document.getElementById('error-message').innerText = json.error.description;
+                });
             }
         });
     });

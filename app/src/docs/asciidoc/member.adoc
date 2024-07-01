@@ -12,7 +12,9 @@ endif::[]
 = link:main.html[main]
 
 == 비 로그인 상태
+
 === 회원가입
+==== 회원가입 정상 작동
 Request
 include::{snippets}/members-sign-up/http-request.adoc[]
 RequestFields
@@ -22,17 +24,61 @@ include::{snippets}/members-sign-up/http-response.adoc[]
 ResponseFields
 include::{snippets}/members-sign-up/response-fields.adoc[]
 
-==== 회원가입 오류상황
+==== 회원가입 로그인 아이디 중복
 Request
-include::{snippets}/members-sign-up-failed/http-request.adoc[]
+include::{snippets}/members-sign-up-failed-case01/http-request.adoc[]
 RequestFields
-include::{snippets}/members-sign-up-failed/request-fields.adoc[]
+include::{snippets}/members-sign-up-failed-case01/request-fields.adoc[]
 Response
-include::{snippets}/members-sign-up-failed/http-response.adoc[]
+include::{snippets}/members-sign-up-failed-case01/http-response.adoc[]
 ResponseFields
-include::{snippets}/members-sign-up-failed/response-fields.adoc[]
+include::{snippets}/members-sign-up-failed-case01/response-fields.adoc[]
+
+==== 회원가입 닉네임 중복
+Request
+include::{snippets}/members-sign-up-failed-case02/http-request.adoc[]
+RequestFields
+include::{snippets}/members-sign-up-failed-case02/request-fields.adoc[]
+Response
+include::{snippets}/members-sign-up-failed-case02/http-response.adoc[]
+ResponseFields
+include::{snippets}/members-sign-up-failed-case02/response-fields.adoc[]
 
 === 로그인
 
+==== 로그인 성공
+Request
+include::{snippets}/members-login/http-request.adoc[]
+RequestFields
+include::{snippets}/members-login/request-fields.adoc[]
+Response
+include::{snippets}/members-login/http-response.adoc[]
+ResponseFields
+include::{snippets}/members-login/response-fields.adoc[]
+ResponseCookies
+include::{snippets}/members-login/cookie-response-headers.adoc[]
+
+==== 로그인 실패
+Request
+include::{snippets}/members-login-failed-case01/http-request.adoc[]
+RequestFields
+include::{snippets}/members-login-failed-case01/request-fields.adoc[]
+Response
+include::{snippets}/members-login-failed-case01/http-response.adoc[]
+ResponseFields
+include::{snippets}/members-login-failed-case01/response-fields.adoc[]
+
 == 로그인 상태
 
+=== 로그아웃
+==== 로그아웃 성공
+Request
+include::{snippets}/members-logout/http-request.adoc[]
+RequestCookies
+include::{snippets}/members-logout/cookie-request-headers.adoc[]
+Response
+include::{snippets}/members-logout/http-response.adoc[]
+ResponseFields
+include::{snippets}/members-logout/response-fields.adoc[]
+ResponseCookies
+include::{snippets}/members-logout/cookie-response-headers.adoc[]
