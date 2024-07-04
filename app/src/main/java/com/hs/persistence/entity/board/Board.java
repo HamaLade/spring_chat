@@ -34,7 +34,7 @@ public class Board {
 
     @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime regDate;
+    private LocalDateTime createDate;
 
     @LastModifiedDate
     private LocalDateTime updateDate;

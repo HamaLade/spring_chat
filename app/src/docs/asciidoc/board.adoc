@@ -1,0 +1,27 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+= CHAT
+:doctype: book
+:toc: left
+:sectnums:
+:toclevels: 5
+:source-highlighter: highlightjs
+
+= link:main.html[main]
+
+== 공지사항
+=== 홈 화면 공지사항 목록 조회
+Request
+include::{snippets}/default-notice-board/http-request.adoc[]
+Response
+include::{snippets}/default-notice-board/http-response.adoc[]
+ResponseFields
+include::{snippets}/default-notice-board/response-fields.adoc[]
+
+=== 공지사항 게시글 목록 화면 페이지
+Request
+include::{snippets}/notice-board-detail/http-request.adoc[]
+Response
+include::{snippets}/notice-board-detail/http-response.adoc[]

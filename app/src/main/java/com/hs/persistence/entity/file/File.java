@@ -36,6 +36,7 @@ public class File {
     private Long referrerId;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50, columnDefinition = "VARCHAR")
     private FileReferrer fileReferrer;
 
     @CreatedDate

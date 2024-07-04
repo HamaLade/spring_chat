@@ -7,10 +7,12 @@ spring:
 
   jpa:
     open-in-view: false
-    hibernate.hbm2ddl.auto: update # H2 1.4.200 버전부터는 hibernate.hbm2ddl.auto 프로퍼티를 사용해야 함
+    hibernate:
+      hbm2ddl.auto: update # H2 1.4.200 버전부터는 hibernate.hbm2ddl.auto 프로퍼티를 사용해야 함
     properties:
       hibernate:
         format_sql: true
+        show_sql: true
 
 jwt:
   member:
@@ -20,3 +22,8 @@ jwt:
     refresh:
       secret: memberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecret
       exp: 10800
+
+board:
+  notice:
+    board:
+      name: notice

@@ -20,3 +20,8 @@ jwt:
     refresh:
       secret: memberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecretmemberRefreshTokenSecret
       exp: 10800
+
+board:
+  notice:
+    board:
+      name: notice

@@ -15,4 +15,9 @@ public class ApiPaths {
     public static final String MEMBER_LOGOUT = MEMBER_ROOT_PATH + "/logout";
     public static final String MEMBER_WITHDRAW = MEMBER_ROOT_PATH + "/withdraw";
 
+    // board
+    public static final String GET_NOTICE_BOARD = "/boards/notice";
+    public static final String GET_NOTICE_BOARD_PAGE = "/boards/notice/page";
+    public static final String GET_BOARD_POST_DETAIL = "/boards/post/{postId}";
+
 }

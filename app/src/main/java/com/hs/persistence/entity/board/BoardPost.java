@@ -24,6 +24,13 @@ public class BoardPost {
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long id;
 
+    // 게시판 ID
+    @Column(nullable = false)
+    private long boardId;
+
+    // 게시판 게시글 작성자 ID
+    private Long writerId;
+
     // 게시판 게시글 제목
     @Column(nullable = false, length = 255, columnDefinition = "VARCHAR")
     private String title;
@@ -36,9 +43,24 @@ public class BoardPost {
     private boolean hasFile;
 
     @CreatedDate
+    @Column(updatable = false)
     private LocalDateTime createDate;
 
     @LastModifiedDate
     private LocalDateTime updateDate;
+
+    public static BoardPost createTestBoardPost(long id, long boardId, Long writerId, String title, String textContent, boolean hasFile) {
+        LocalDateTime now = LocalDateTime.now();
+        BoardPost boardPost = new BoardPost();
+        boardPost.id = id;
+        boardPost.boardId = boardId;
+        boardPost.writerId = writerId;
+        boardPost.title = title;
+        boardPost.textContent = textContent;
+        boardPost.hasFile = hasFile;
+        boardPost.createDate = now;
+
+        return boardPost;
+    }
 
 }

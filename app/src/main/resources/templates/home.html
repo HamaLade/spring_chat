@@ -92,6 +92,15 @@
             text-decoration: none; /* 링크의 밑줄 제거 */
         }
 
+        #notice-page {
+            display: block;
+            width: 100%;
+            text-align: right;
+            color: #333333;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
     </style>
 </head>
 <body>
@@ -115,39 +124,50 @@
     <div class="chat-container">
         <!-- 채팅창 -->
         <h2 th:align="center">채팅방</h2>
-        <!-- 실제로 채팅 UI를 추가하면 됩니다 -->
         <ul>
             <li>채팅 내용 1</li>
             <li>채팅 내용 2</li>
             <li>채팅 내용 3</li>
-            <!-- 동적으로 데이터 바인딩 가능 -->
         </ul>
     </div>
     <div class="main-content">
         <!-- 게시글 목록 -->
-        <h2 th:align="center">게시판</h2>
+        <h2 th:align="center">공지사항</h2> <!-- 오른쪽 구석에 공지사항 게시글 목록 보기 페이지로 이동할 더보기 버튼 추가 -->
+        <a id="notice-page" href="/boards/notice/page">더보기</a>
         <ul>
-            <li>공지</li>
-            <li>게시글 1</li>
-            <li>게시글 2</li>
-            <li>게시글 3</li>
-            <li>게시글 4</li>
-            <li>게시글 5</li>
-            <li>게시글 6</li>
-            <li>게시글 7</li>
-            <li>게시글 8</li>
-            <li>게시글 9</li>
-            <li>게시글 10</li>
-            <li>게시글 11</li>
-            <li>게시글 12</li>
-            <li>게시글 13</li>
-            <li>게시글 14</li>
-            <li>게시글 15</li>
-            <!-- 동적으로 데이터 바인딩 가능 -->
         </ul>
     </div>
 </div>
 <script>
+    // 페이지 로드 시 실행
+    document.addEventListener('DOMContentLoaded', function () {
+        // /boards/notice post api 요청
+        fetch('/boards/notice', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (json) {
+                console.log(json);
+                json.data.content.forEach(function (notice) {
+                    var li = document.createElement('li');
+                    li.textContent = notice.id + '. ' + notice.title;
+                    li.addEventListener('click', function () {
+                        location.href = '/boards/post/' + notice.id;
+                    });
+                    document.querySelector('.main-content ul').appendChild(li);
+                });
+            })
+            .catch(function (error) {
+                console.error('Notice board fetch failed', error);
+            });
+    });
+
     function logout() {
         fetch('/members/logout', {
             method: 'POST',

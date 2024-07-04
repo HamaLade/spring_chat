@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>공지사항</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            height: 80px;
+            background-color: #757575;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .top-bar a, .top-bar button {
+            background-color: #ffffff;
+            color: #333333;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        .top-bar a:hover, .top-bar button:hover {
+            background-color: #eeeeee;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .main-content {
+            width: 100%;
+            background-color: #f5f5f5;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .main-content h2 {
+            color: #333333;
+            font-size: 24px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .notice-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .notice-item {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 16px;
+            padding: 16px;
+            cursor: pointer;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            color: #333333;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
+            border: 1px solid #ddd;
+            margin: 0 4px;
+        }
+
+        .pagination a.active {
+            background-color: #757575;
+            color: white;
+            border: 1px solid #757575;
+        }
+
+        .pagination a:hover:not(.active) {background-color: #ddd;}
+    </style>
+</head>
+<body>
+<div class="top-bar">
+    <div></div>
+    <div>
+        <div sec:authorize="isAuthenticated()">
+            <a id="logout" href="#" onclick="logout()">로그아웃</a>
+            <a id="withdraw" th:href="@{/withdraw}">회원탈퇴</a>
+        </div>
+        <div sec:authorize="isAnonymous()">
+            <a id="login" th:href="@{${loginPage}}">로그인</a>
+            <a id="signup" th:href="@{${signupPage}}">회원가입</a>
+        </div>
+    </div>
+</div>
+<div class="content-wrapper">
+    <div class="main-content">
+        <h2>공지사항</h2>
+        <ul class="notice-list">
+            <li th:each="post : ${noticePage.content}" class="notice-item" th:onclick="'location.href=\'/boards/post/' + ${post.id} + '\''">
+                <span th:text="${post.id + '. ' + post.title}"></span>
+            </li>
+        </ul>
+        <div class="pagination" th:if="${noticePage.totalPages > 0}">
+            <a th:href="@{/boards/notice/page(page=0)}" th:class="${noticePage.first} ? 'disabled' : ''">&laquo;</a>
+            <a th:href="@{/boards/notice/page(page=${noticePage.number - 1})}" th:class="${noticePage.first} ? 'disabled' : ''">&lt;</a>
+
+            <a th:each="i : ${#numbers.sequence(0, noticePage.totalPages - 1)}"
+               th:href="@{/boards/notice/page(page=${i})}"
+               th:text="${i + 1}"
+               th:class="${i == noticePage.number} ? 'active' : ''">
+            </a>
+
+            <a th:href="@{/boards/notice/page(page=${noticePage.number + 1})}" th:class="${noticePage.last} ? 'disabled' : ''">&gt;</a>
+            <a th:href="@{/boards/notice/page(page=${noticePage.totalPages - 1})}" th:class="${noticePage.last} ? 'disabled' : ''">&raquo;</a>
+        </div>
+    </div>
+</div>
+<script>
+    function logout() {
+        fetch('/members/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(function (response) {
+            if (response.ok) {
+                location.href = '/';
+            }
+        }).catch(function (error) {
+            console.log('Logout failed', error);
+        });
+    }
+</script>
+</body>
+</html>

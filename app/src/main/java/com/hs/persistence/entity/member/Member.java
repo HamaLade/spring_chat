@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -46,6 +47,9 @@ public class Member {
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdDate;
+
+    @LastModifiedDate
+    private LocalDateTime updateDate;
 
     public Member(Long id, String loginId, String nickname, String password) {
         this.id = id;

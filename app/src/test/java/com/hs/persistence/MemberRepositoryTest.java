@@ -15,7 +15,7 @@ import org.springframework.test.context.jdbc.Sql;
 @DataJpaTest
 @Sql({"/sql/test/schema.sql", "/sql/test/data.sql"})
 @ActiveProfiles("test")
-@DisplayName("MemberRepository 읽기 테스트")
+@DisplayName("MemberRepository 테스트")
 public class MemberRepositoryTest {
 
     @Autowired
