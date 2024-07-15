@@ -9,7 +9,7 @@ import com.hs.presentation.auth.dto.MemberSignUpRequestDto;
 import com.hs.utils.FieldDescriptorUtils;
 import com.hs.utils.RequestCookiesSnippet;
 import com.hs.utils.ResponseCookiesSnippet;
-import com.hs.utils.jwt.MemberJwtProperties;
+import com.hs.setting.utils.jwt.MemberJwtProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

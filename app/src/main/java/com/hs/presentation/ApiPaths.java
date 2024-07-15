@@ -14,10 +14,20 @@ public class ApiPaths {
     public static final String MEMBER_SIGNUP = MEMBER_ROOT_PATH + "/signup";
     public static final String MEMBER_LOGOUT = MEMBER_ROOT_PATH + "/logout";
     public static final String MEMBER_WITHDRAW = MEMBER_ROOT_PATH + "/withdraw";
+    public static final String MEMBER_TOKEN_AUTHORIZE = MEMBER_ROOT_PATH + "/token/authorize";
 
     // board
-    public static final String GET_NOTICE_BOARD = "/boards/notice";
-    public static final String GET_NOTICE_BOARD_PAGE = "/boards/notice/page";
-    public static final String GET_BOARD_POST_DETAIL = "/boards/post/{postId}";
+    public static final String BOARD_ROOT_PATH = "/boards";
+    public static final String GET_NOTICE_BOARD = BOARD_ROOT_PATH + "/notice";
+    public static final String GET_NOTICE_BOARD_PAGE = BOARD_ROOT_PATH + "/notice/page";
+    public static final String GET_BOARD_POST_DETAIL = BOARD_ROOT_PATH + "/post/{postId}";
+
+    // chat
+    public static final String CHAT_ROOT_PATH = "/chat";
+    public static final String CHAT_ROOM_ROOT_PATH = CHAT_ROOT_PATH + "/rooms";
+    public static final String CHAT_ROOM_PUBLIC = CHAT_ROOM_ROOT_PATH + "/public";
+    public static final String CHAT_ROOM_SEARCH_PUBLIC = CHAT_ROOM_ROOT_PATH + "/search/public";
+    public static final String CHAT_ROOM_CREATE = CHAT_ROOM_ROOT_PATH + "/create";
+    public static final String CHAT_ROOM_JOIN = CHAT_ROOM_ROOT_PATH + "/join/{roomId}";
 
 }

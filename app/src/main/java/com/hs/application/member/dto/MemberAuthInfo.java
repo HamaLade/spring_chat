@@ -1,6 +1,6 @@
 package com.hs.application.member.dto;
 
-import com.hs.utils.jwt.TokenInfo;
+import com.hs.setting.utils.jwt.TokenInfo;
 import lombok.Getter;
 
 @Getter

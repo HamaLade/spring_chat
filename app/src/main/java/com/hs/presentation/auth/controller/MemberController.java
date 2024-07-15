@@ -10,6 +10,7 @@ import com.hs.presentation.auth.dto.MemberSignUpRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -87,9 +88,29 @@ public class MemberController {
      */
     @ResponseBody
     @PostMapping(ApiPaths.MEMBER_WITHDRAW)
-    public String withdrawProcess() {
-//        memberAuthService.withdraw();
-        return "redirect:/home";
+    public ResponseEntity<ResponseMessage> withdrawProcess() {
+
+        try {
+            memberAuthService.withdraw();
+            return ResponseEntity.ok(new ResponseMessage("ok", null));
+        } catch (Exception e) {
+            log.error("withdraw failed", e);
+            Errors error = Errors.WITHDRAW_FAILED;
+            return ResponseMessage.errorResponseEntity(error, "회원탈퇴 실패", e);
+        }
+    }
+
+    @ResponseBody
+    @PostMapping(ApiPaths.MEMBER_TOKEN_AUTHORIZE)
+    public ResponseEntity<String> tokenAuthorize() {
+
+        try {
+            UserDetails authorization = memberAuthService.authorization();
+            return ResponseEntity.ok(authorization.getUsername());
+        } catch (Exception e) {
+            log.error("token authorize failed", e);
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 

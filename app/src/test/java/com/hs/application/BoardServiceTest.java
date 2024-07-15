@@ -6,7 +6,7 @@ import com.hs.application.board.service.BoardService;
 import com.hs.persistence.entity.board.BoardPost;
 import com.hs.persistence.repository.board.BoardPostRepository;
 import com.hs.persistence.repository.board.BoardRepository;
-import com.hs.utils.board.BoardProperties;
+import com.hs.setting.utils.board.BoardProperties;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

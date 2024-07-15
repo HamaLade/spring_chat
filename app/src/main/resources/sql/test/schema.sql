@@ -41,6 +41,33 @@ primary key(id)
 
 
 
+--room
+drop table if exists `room`;
+create table `room`(
+id bigint not null auto_increment,
+room_name varchar(50) not null,
+is_private tinyint not null default 0,
+create_date timestamp(3) not null default current_timestamp,
+update_date timestamp(3),
+primary key(id)
+);
+
+
+
+--participant
+drop table if exists `participant`;
+create table `participant`(
+id bigint not null auto_increment,
+room_id bigint not null,
+member_id bigint not null,
+invitable tinyint not null,
+create_date timestamp(3) not null default current_timestamp,
+update_date timestamp(3),
+primary key(id)
+);
+
+
+
 --file
 drop table if exists `file`;
 create table `file`(

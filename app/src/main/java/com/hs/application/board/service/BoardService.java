@@ -2,7 +2,6 @@ package com.hs.application.board.service;
 
 import com.hs.application.board.dto.BoardPostDetailResponseDto;
 import com.hs.application.board.dto.BoardPostResponseDto;
-import com.hs.application.board.exception.BoardPostFileNotFoundException;
 import com.hs.application.board.exception.BoardPostNotFoundException;
 import com.hs.persistence.entity.board.BoardPost;
 import com.hs.persistence.entity.file.File;
@@ -10,7 +9,7 @@ import com.hs.persistence.entity.file.FileReferrer;
 import com.hs.persistence.repository.board.BoardPostRepository;
 import com.hs.persistence.repository.file.FileRepository;
 import com.hs.persistence.repository.memeber.MemberRepository;
-import com.hs.utils.board.BoardProperties;
+import com.hs.setting.utils.board.BoardProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

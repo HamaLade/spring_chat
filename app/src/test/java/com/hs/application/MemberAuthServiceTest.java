@@ -4,7 +4,7 @@ import com.hs.application.member.service.MemberAuthService;
 import com.hs.persistence.entity.member.Member;
 import com.hs.persistence.entity.member.MemberRole;
 import com.hs.persistence.repository.memeber.MemberRepository;
-import com.hs.utils.jwt.MemberJwtProperties;
+import com.hs.setting.utils.jwt.MemberJwtProperties;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -29,7 +29,7 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.hs.utils.jwt.MemberJwtProperties.*;
+import static com.hs.setting.utils.jwt.MemberJwtProperties.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")

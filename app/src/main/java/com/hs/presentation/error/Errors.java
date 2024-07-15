@@ -27,7 +27,14 @@ public enum Errors {
     LOGIN_FAILED("로그인에 실패했습니다.", 1004, 400),
 
     // 회원 가입 실패
-    SIGNUP_FAILED("회원가입에 실패했습니다.", 1005, 400)
+    SIGNUP_FAILED("회원가입에 실패했습니다.", 1005, 400),
+
+    // 회원 탈퇴 실패
+    WITHDRAW_FAILED("회원탈퇴에 실패했습니다.", 1006, 400),
+
+    UNAUTHORIZED("인증되지 않은 사용자입니다.", 1006, 401)
+
+
 
     ;
 

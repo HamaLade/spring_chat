@@ -30,7 +30,7 @@ public class Board {
 
     // 게시판 활성화 여부
     @Column(nullable = false, columnDefinition = "TINYINT")
-    private boolean isActivated;
+    private Boolean isActivated;
 
     @CreatedDate
     @Column(updatable = false)

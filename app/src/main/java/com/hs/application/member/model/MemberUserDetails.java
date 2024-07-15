@@ -1,12 +1,14 @@
 package com.hs.application.member.model;
 
 import com.hs.persistence.entity.member.Member;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
 
+@Getter
 public class MemberUserDetails implements UserDetails {
 
     private final Long id;

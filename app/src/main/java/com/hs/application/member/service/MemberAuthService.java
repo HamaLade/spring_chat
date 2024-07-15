@@ -1,6 +1,8 @@
 package com.hs.application.member.service;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hs.application.auth.AuthService;
 import com.hs.application.member.dto.MemberAuthInfo;
 import com.hs.application.member.exception.AuthorizationFailed;
@@ -10,10 +12,10 @@ import com.hs.application.member.exception.SignUpFailedException;
 import com.hs.application.member.model.MemberUserDetails;
 import com.hs.persistence.entity.member.Member;
 import com.hs.persistence.repository.memeber.MemberRepository;
-import com.hs.utils.jwt.JwtUtils;
-import com.hs.utils.jwt.MemberJwtProperties;
-import com.hs.utils.jwt.TokenInfo;
-import com.hs.utils.web.HttpServletUtils;
+import com.hs.setting.utils.jwt.JwtUtils;
+import com.hs.setting.utils.jwt.MemberJwtProperties;
+import com.hs.setting.utils.jwt.TokenInfo;
+import com.hs.setting.utils.web.HttpServletUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -22,6 +24,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,36 +45,38 @@ public class MemberAuthService implements AuthService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RedisTemplate<String, String> redisTemplate;
     private final MemberJwtProperties memberJwtProperties;
 
     /**
      * 로그인
      * 로그인 성공 시 accessToken, refreshToken을 발급
      *
-     * @param loginId 로그인 아이디
+     * @param loginId  로그인 아이디
      * @param password 비밀번호
-     * @return 실패 시 에러 메시지, 성공 시 null (에러 메세지는 예외의 메세지를 반환하도록 처리)
+     * @return 성공 시 accessToken, refreshToken을 담은 MemberAuthInfo, 실패 시 LoginInfoNotMatched 예외 발생
+     * @throws LoginFailedException 로그인 실패
      */
     public MemberAuthInfo login(String loginId, String password) {
-            Member member = memberRepository.findByLoginId(loginId)
-                    .orElseThrow(LoginInfoNotMatched::new);
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(LoginInfoNotMatched::new);
 
-            if (passwordEncoder.matches(password, member.getPassword())) {
+        if (passwordEncoder.matches(password, member.getPassword())) {
 
-                Instant now = Instant.now();
+            Instant now = Instant.now();
+            TokenInfo accessToken = generateAccessToken(member, now);
+            TokenInfo refreshToken = generateRefreshToken(member, now);
 
-                TokenInfo accessToken = generateAccessToken(member, now);
-                TokenInfo refreshToken = generateRefreshToken(member, now);
-                return new MemberAuthInfo(accessToken, refreshToken);
-            } else {
-                throw new LoginInfoNotMatched();
-            }
+            return new MemberAuthInfo(accessToken, refreshToken);
+        } else {
+            throw new LoginInfoNotMatched();
+        }
     }
 
     /**
      * accessToken 발급
      *
-     * @param member 회원 정보
+     * @param member  회원 정보
      * @param instant 현재 시간
      * @return tokenInfo
      */
@@ -97,7 +104,8 @@ public class MemberAuthService implements AuthService {
 
     /**
      * refreshToken 발급
-     * @param member 회원 정보
+     *
+     * @param member  회원 정보
      * @param instant 현재 시간
      * @return tokenInfo
      */
@@ -142,19 +150,20 @@ public class MemberAuthService implements AuthService {
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setHttpOnly(true);
         response.addCookie(refreshTokenCookie);
+
     }
 
     /**
      * 회원가입
      * 중복 검사 후 회원가입
      *
-     * @throws SignUpFailedException 회원가입 실패
-     * @throws AuthorizationFailed 인증 실패
-     * @throws LoginFailedException 로그인 실패
-     * @throws LoginInfoNotMatched 로그인 정보 불일치
-     * @param loginId 로그인 아이디
+     * @param loginId  로그인 아이디
      * @param nickName 닉네임
      * @param password 비밀번호
+     * @throws SignUpFailedException 회원가입 실패
+     * @throws AuthorizationFailed   인증 실패
+     * @throws LoginFailedException  로그인 실패
+     * @throws LoginInfoNotMatched   로그인 정보 불일치
      */
     public void signUp(String loginId, String nickName, String password) {
 
@@ -264,4 +273,33 @@ public class MemberAuthService implements AuthService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return null;
     }
+
+    /**
+     * 회원 탈퇴
+     * @throws AuthorizationFailed 인증 실패
+     */
+    public void withdraw() {
+        UserDetails userDetails = authorization();
+        if (userDetails == null) {
+            throw new AuthorizationFailed();
+        }
+        Member member = memberRepository.findById(Long.valueOf(userDetails.getUsername()))
+                .orElseThrow(AuthorizationFailed::new);
+        memberRepository.delete(member);
+    }
+
+    /**
+     * 레디스에 요청자의 Refresh Jwt토큰을 Key 요청자의 memberId를 Value로 하는 데이터를 저장
+     */
+    public void saveTokenToRedis() {
+
+        MemberUserDetails memberUserDetails = (MemberUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Cookie refreshTokenCookie = JwtUtils.findRefreshTokenCookie();
+        if (refreshTokenCookie != null) {
+            ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+            valueOperations.set(refreshTokenCookie.getValue(), memberUserDetails.getUsername());
+        }
+    }
+
 }

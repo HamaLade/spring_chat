@@ -26,7 +26,7 @@ public class BoardPost {
 
     // 게시판 ID
     @Column(nullable = false)
-    private long boardId;
+    private Long boardId;
 
     // 게시판 게시글 작성자 ID
     private Long writerId;
