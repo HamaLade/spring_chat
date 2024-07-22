@@ -1,14 +1,9 @@
 package com.hs.application.member.service;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hs.application.auth.AuthService;
 import com.hs.application.member.dto.MemberAuthInfo;
-import com.hs.application.member.exception.AuthorizationFailed;
-import com.hs.application.member.exception.LoginFailedException;
-import com.hs.application.member.exception.LoginInfoNotMatched;
-import com.hs.application.member.exception.SignUpFailedException;
+import com.hs.application.member.exception.*;
 import com.hs.application.member.model.MemberUserDetails;
 import com.hs.persistence.entity.member.Member;
 import com.hs.persistence.repository.memeber.MemberRepository;
@@ -31,15 +26,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 회원 인증 서비스
  */
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberAuthService implements AuthService {
 
@@ -54,12 +52,13 @@ public class MemberAuthService implements AuthService {
      *
      * @param loginId  로그인 아이디
      * @param password 비밀번호
-     * @return 성공 시 accessToken, refreshToken을 담은 MemberAuthInfo, 실패 시 LoginInfoNotMatched 예외 발생
-     * @throws LoginFailedException 로그인 실패
+     * @return 성공 시 accessToken, refreshToken을 담은 MemberAuthInfo, 실패 시 LoginInfoNotMatchedException 예외 발생
+     * @throws LoginFailedException 로그인 실패 시 예외
      */
     public MemberAuthInfo login(String loginId, String password) {
+
         Member member = memberRepository.findByLoginId(loginId)
-                .orElseThrow(LoginInfoNotMatched::new);
+                .orElseThrow(LoginFailedException::new); // 로그인 실패 이유를 노출하지 않기 위해 LoginFailedException을 던짐
 
         if (passwordEncoder.matches(password, member.getPassword())) {
 
@@ -69,7 +68,7 @@ public class MemberAuthService implements AuthService {
 
             return new MemberAuthInfo(accessToken, refreshToken);
         } else {
-            throw new LoginInfoNotMatched();
+            throw new LoginFailedException();
         }
     }
 
@@ -81,7 +80,25 @@ public class MemberAuthService implements AuthService {
      * @return tokenInfo
      */
     private TokenInfo generateAccessToken(Member member, Instant instant) {
+        return getAcessTokenInfo(member, instant);
+    }
 
+    /**
+     * accessToken 발급
+     *
+     * @param memberId  회원 ID
+     * @param instant 현재 시간
+     * @return tokenInfo
+     */
+    public TokenInfo generateAccessToken(Long memberId, Instant instant) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        return getAcessTokenInfo(member, instant);
+    }
+
+    private TokenInfo getAcessTokenInfo(Member member, Instant instant) {
         long accessTokenExpireTime = instant.plusSeconds(memberJwtProperties.getAccessTokenExpiredTime()).getEpochSecond();
 
         String accessToken = Jwts.builder()
@@ -160,23 +177,21 @@ public class MemberAuthService implements AuthService {
      * @param loginId  로그인 아이디
      * @param nickName 닉네임
      * @param password 비밀번호
-     * @throws SignUpFailedException 회원가입 실패
-     * @throws AuthorizationFailed   인증 실패
-     * @throws LoginFailedException  로그인 실패
-     * @throws LoginInfoNotMatched   로그인 정보 불일치
+     * @throws SignUpFailedException 회원가입 실패 시 예외 발생
      */
+    @Transactional
     public void signUp(String loginId, String nickName, String password) {
 
         // 아이디 중복 검사
         memberRepository.findByLoginId(loginId)
                 .ifPresent(member -> {
-                    throw new SignUpFailedException("이미 존재하는 아이디입니다.");
+                    throw new MemberLoginIdExistsException();
                 });
 
         // 닉네임 중복 검사
         memberRepository.findByNickname(nickName)
                 .ifPresent(member -> {
-                    throw new SignUpFailedException("이미 존재하는 닉네임입니다.");
+                    throw new MemberNicknameExistsException();
                 });
 
         // 회원가입
@@ -216,7 +231,6 @@ public class MemberAuthService implements AuthService {
 
         if (userDetails != null) {
             memberRepository.findById(Long.valueOf(userDetails.getUsername())).ifPresent(member -> {
-                // accessToken 재발급, ifPresent는 get()의 경고를 없애기 위해 사용 (현 상황에서는 동시성 이슈를 제외하면 Member Entity는 위에서 이미 조회했기 때문에 null일 수 없다)
                 generateAccessToken(member, Instant.now());
             });
             return userDetails;
@@ -234,7 +248,7 @@ public class MemberAuthService implements AuthService {
         try {
             Jws<Claims> claims = memberJwtProperties.getAccessParser().parseClaimsJws(accessToken);
             Member member = memberRepository.findById(Long.parseLong((String) claims.getBody().get(MemberJwtProperties.USER_ID)))
-                    .orElseThrow(AuthorizationFailed::new);
+                    .orElseThrow(AuthorizationFailedException::new);
 
             return new MemberUserDetails(member);
         } catch (Exception e) {
@@ -253,7 +267,7 @@ public class MemberAuthService implements AuthService {
         try {
             Jws<Claims> claims = memberJwtProperties.getRefreshParser().parseClaimsJws(refreshToken);
             Member member = memberRepository.findById(Long.parseLong((String) claims.getBody().get(MemberJwtProperties.USER_ID)))
-                    .orElseThrow(AuthorizationFailed::new);
+                    .orElseThrow(AuthorizationFailedException::new);
 
             return new MemberUserDetails(member);
         } catch (Exception e) {
@@ -276,15 +290,15 @@ public class MemberAuthService implements AuthService {
 
     /**
      * 회원 탈퇴
-     * @throws AuthorizationFailed 인증 실패
+     * @throws MemberNotFoundException 탈퇴 대상의 회원을 찾을 수 없을 때
      */
     public void withdraw() {
         UserDetails userDetails = authorization();
         if (userDetails == null) {
-            throw new AuthorizationFailed();
+            throw new AuthorizationFailedException();
         }
         Member member = memberRepository.findById(Long.valueOf(userDetails.getUsername()))
-                .orElseThrow(AuthorizationFailed::new);
+                .orElseThrow(MemberNotFoundException::new);
         memberRepository.delete(member);
     }
 
@@ -299,6 +313,31 @@ public class MemberAuthService implements AuthService {
         if (refreshTokenCookie != null) {
             ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
             valueOperations.set(refreshTokenCookie.getValue(), memberUserDetails.getUsername());
+        }
+    }
+
+    /**
+     * memberNickname을 통해 Member 객체를 조회
+     * @param memberNickname 닉네임
+     * @return members 존재하지 않거나 조회 실패 시 null, like 검색으로 memberNickname string 리스트로 반환
+     */
+    public List<String> searchMember(String memberNickname) {
+
+        if (memberNickname == null || memberNickname.isBlank()) {
+            return null;
+        }
+
+        try {
+            List<Member> allByNicknameContaining = memberRepository.findAllByNicknameContaining(memberNickname);
+            if (allByNicknameContaining.isEmpty()) {
+                return null;
+            }
+            return allByNicknameContaining.stream()
+                    .map(Member::getNickname)
+                    .toList();
+        } catch (Exception e) {
+            log.error("searchMember error", e);
+            return null;
         }
     }
 

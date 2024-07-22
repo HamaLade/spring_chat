@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,8 +37,12 @@ public class StompHandler implements ChannelInterceptor {
             if (token != null) {
                 String value = redisTemplate.opsForValue().get(token);
                 if (value != null) {
-                    accessor.removeNativeHeader("memberId");
-                    accessor.addNativeHeader("memberId", value);
+                    accessor.setUser(new Principal() {
+                        @Override
+                        public String getName() {
+                            return value;
+                        }
+                    });
                     redisTemplate.delete(token);
                 } else {
                     log.error("소켓 연결 실패: token: {}", token);

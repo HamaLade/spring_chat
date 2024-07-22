@@ -99,6 +99,62 @@
         .participants-list li {
             margin-bottom: 10px;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #userSearchInput {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        #userSearchResults {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #userSearchResults li {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        #userSearchResults li:hover {
+            background-color: #f0f0f0;
+        }
     </style>
 </head>
 <body>
@@ -106,14 +162,25 @@
     <h2 th:text="${roomDetailInfo.chatRoomName}">채팅방 이름</h2>
     <div>
         <a id="logout" th:if="${#authorization.expression('isAuthenticated()')}" onclick="logout()">로그아웃</a>
-        <a onclick="printParticipants()"></a>
-        <a href="/login" th:unless="${#authorization.expression('isAuthenticated()')}">로그인</a>
+        <a id="exit-room" th:if="${#authorization.expression('isAuthenticated()')}" onclick="exitRoom()" style="background-color: #ff0000; color: #ffffff;">나가기</a>
+        <a id="invite-user" th:if="${roomDetailInfo.isPrivate}" onclick="openInviteModal()" style="background-color: #4CAF50; color: #ffffff;">유저 초대</a>
+    </div>
+</div>
+<div id="inviteModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeInviteModal()">&times;</span>
+        <h2>유저 초대</h2>
+        <input type="text" id="userSearchInput" placeholder="유저 검색...">
+        <ul id="userSearchResults"></ul>
     </div>
 </div>
 <div class="content-wrapper">
     <div class="chat-area">
         <div id="chatMessages" class="chat-messages">
             <!-- 채팅 메시지들이 여기에 동적으로 추가됩니다 -->
+            <div th:each="recentMessage : ${roomDetailInfo.recentMessages}" class="message">
+                <span th:text="${recentMessage.senderNickname} + ': ' + ${recentMessage.message}"></span>
+            </div>
         </div>
         <div class="chat-input">
             <input type="text" id="messageInput" placeholder="메시지를 입력하세요">
@@ -122,8 +189,7 @@
     </div>
     <div class="participants-list">
         <h3>참가자 목록</h3>
-        <ul>
-            <li th:each="participant : ${roomDetailInfo.participants}" th:text="${participant.memberNickName}"></li>
+        <ul id="participants">
         </ul>
     </div>
 </div>
@@ -132,20 +198,72 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script th:inline="javascript">
     const roomId = [[${roomDetailInfo.chatRoomId}]];
-    const memberId = [[${#authentication.principal.id}]];
+    const memberNickname = [[${roomDetailInfo.memberNickname}]];
     let stompClient = null;
-    const participants = new Map();
+    const participants = new Set();
     /*[# th:each="participant : ${roomDetailInfo.participants}"]*/
-    participants.set([[${participant.memberId}]], [[${participant.memberNickName}]]);
+    participants.add([[${participant.memberNickname}]]);
     /*[/]*/
 
     function connect() {
-        let socket = new SockJS('http://localhost:8081/chat');
-        stompClient = Stomp.over(socket);
-        stompClient.connect({}, function (frame) {
-            stompClient.subscribe('/subscribe/chat/room/' + roomId, function (message) {
-                showMessage(JSON.parse(message.body));
+        return new Promise((resolve, reject) => {
+            let socket = new SockJS('http://localhost:8081/chat');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                stompClient.subscribe('/subscribe/chat/room/' + roomId, function (message) {
+                    showMessage(JSON.parse(message.body));
+                });
+                stompClient.subscribe('/subscribe/chat/join/room/' + roomId, function (message) {
+                    showParticipants(JSON.parse(message.body));
+                });
+                resolve(stompClient);
+            }, error => {
+                console.error('STOMP error', error);
+                reject(error);
             });
+        });
+    }
+
+    function exitRoom() {
+        fetch('/chat/rooms/exit/' + roomId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(function (response) {
+            console.log(response);
+            if (response.ok) {
+                location.href = '/chat/rooms';
+            }
+        }).catch(function (error) {
+            console.log('Exit room failed', error);
+        });
+    }
+
+
+    async function setUpChatRoom() {
+        try {
+            await connect();
+            let join = {
+                memberNickname: memberNickname
+            };
+            stompClient.send("/publish/chat/join/" + roomId, {}, JSON.stringify(join));
+            showParticipants(null);
+        } catch (error) {
+            console.error('Failed to set up chat room', error);
+        }
+    }
+
+    function showParticipants(message) {
+        if (message) {
+            participants.add(message.memberNickname);
+        }
+        let participantsList = document.getElementById('participants');
+        participantsList.innerHTML = '';
+        Array.from(participants).sort().forEach(participant => {
+            let li = document.createElement('li');
+            li.textContent = participant;
+            participantsList.appendChild(li);
         });
     }
 
@@ -159,8 +277,11 @@
         let messageContent = document.getElementById('messageInput').value;
         if (messageContent && stompClient) {
             let chatMessage = {
-                memberId: memberId,
-                textContent: messageContent
+                roomId: roomId,
+                chatType: 'REGULAR',
+                message: messageContent,
+                senderNickname: memberNickname,
+                hasFile: false
             };
             stompClient.send("/publish/chat/message/" + roomId, {}, JSON.stringify(chatMessage));
             document.getElementById('messageInput').value = '';
@@ -169,12 +290,12 @@
 
     function showMessage(message) {
         let messageElement = document.createElement('div');
-        messageElement.textContent = participants.get(message.memberId) + ": " + message.textContent;
+        messageElement.textContent = message.memberNickname + ": " + message.textContent;
         document.getElementById('chatMessages').appendChild(messageElement);
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        connect();
+        setUpChatRoom();
     });
 
     function logout() {
@@ -192,6 +313,74 @@
             console.log('Logout failed', error);
         });
     }
+
+    let selectedUser = null;
+
+    function openInviteModal() {
+        document.getElementById('inviteModal').style.display = 'block';
+    }
+
+    function closeInviteModal() {
+        document.getElementById('inviteModal').style.display = 'none';
+        document.getElementById('userSearchInput').value = '';
+        document.getElementById('userSearchResults').innerHTML = '';
+        selectedUser = null;
+    }
+
+    function searchUser() {
+        const searchInput = document.getElementById('userSearchInput').value;
+        // 여기에 사용자 검색 API 호출 로직 추가
+        // 예시:
+        fetch('/members/search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ memberNickname: searchInput })
+        })
+            .then(response => response.json())
+            .then(json => {
+                const resultsList = document.getElementById('userSearchResults');
+                resultsList.innerHTML = '';
+                json.data.forEach(user => {
+                    const li = document.createElement('li');
+                    li.textContent = user;
+                    li.onclick = () => confirm('초대하시겠습니까?') && inviteUser(user);
+                    resultsList.appendChild(li);
+                });
+            });
+    }
+
+    function inviteUser(inviteMemberNickname) {
+
+        fetch(`/chat/rooms/invite/${roomId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ memberNickname: inviteMemberNickname })
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('초대가 성공적으로 전송되었습니다.');
+                    showParticipants({ memberNickname: inviteMemberNickname })
+                    closeInviteModal();
+                } else {
+                    return response.json().then(data => {
+                        throw new Error(data.message || '초대 중 오류가 발생했습니다.');
+                    });
+                }
+            })
+            .catch(error => {
+                alert(error.message);
+            });
+    }
+
+    document.getElementById('userSearchInput').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            searchUser();
+        }
+    });
 </script>
 </body>
 </html>

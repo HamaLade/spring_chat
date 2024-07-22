@@ -1,4 +1,4 @@
-package com.hs.presentation.room.dto;
+package com.hs.presentation.chat.dto;
 
 import lombok.Getter;
 

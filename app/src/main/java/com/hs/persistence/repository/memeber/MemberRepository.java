@@ -18,7 +18,6 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
 
     List<Member> findAllByIdIn(List<Long> ids);
 
-    // MemberId를 Key로 하는 Map<Long, Member>을 반환
-
+    List<Member> findAllByNicknameContaining(String nickname);
 
 }

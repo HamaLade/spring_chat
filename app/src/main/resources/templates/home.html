@@ -183,12 +183,21 @@
             </div>
             <!-- 참가 중인 채팅방 목록 -->
             <ul id="chatRoomList">
-                <!-- 여기에 채팅방 목록이 동적으로 추가됩니다 -->
+                <!-- joinedChatRooms.chatRoomName을 나열 -->
+                <li th:each="chatRoom : ${joinedChatRooms}" th:text="${chatRoom.chatRoomName}"
+                    th:onclick="'location.href=\'/chat/rooms/join/' + ${chatRoom.chatRoomId} + '\';'">
+
+                </li>
             </ul>
         </div>
         <div sec:authorize="isAnonymous()">
             <p>회원만 이용 가능합니다.</p>
         </div>
+    </div>
+    <div class="main-content">
+        <h2 th:align="center">게시판</h2>
+        <ul>
+        </ul>
     </div>
 </div>
 <script>
@@ -206,7 +215,6 @@
                 return response.json();
             })
             .then(function (json) {
-                console.log(json);
                 json.data.content.forEach(function (notice) {
                     var li = document.createElement('li');
                     li.textContent = notice.id + '. ' + notice.title;
@@ -228,7 +236,6 @@
                 'Content-Type': 'application/json'
             }
         }).then(function (response) {
-            console.log(response);
             if (response.ok) {
                 location.href = '/';
             }

@@ -1,4 +1,4 @@
-package com.hs.presentation.room.controller;
+package com.hs.presentation.chat.controller;
 
 import com.hs.application.member.service.MemberAuthService;
 import com.hs.application.room.dto.ChatRoomDetailInfo;
@@ -6,7 +6,8 @@ import com.hs.application.room.dto.ChatRoomInfo;
 import com.hs.application.room.service.RoomService;
 import com.hs.presentation.ApiPaths;
 import com.hs.presentation.ResponseMessage;
-import com.hs.presentation.room.dto.CreateRoomRequestDto;
+import com.hs.presentation.chat.dto.CreateRoomRequestDto;
+import com.hs.presentation.chat.dto.InviteMemberRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -64,8 +65,9 @@ public class RoomController {
             @PathVariable Long roomId,
             Model model
     ) {
-
+        roomService.chatRoomJoin(roomId);
         memberAuthService.saveTokenToRedis();
+
         ChatRoomDetailInfo roomDetailInfo = roomService.getRoomDetailInfo(roomId);
 
         model.addAttribute("roomDetailInfo", roomDetailInfo);
@@ -73,6 +75,30 @@ public class RoomController {
         return "chat-room";
     }
 
+    @ResponseBody
+    @PostMapping(ApiPaths.CHAT_ROOM_EXIT)
+    public ResponseEntity<ResponseMessage> exitRoom(
+            @PathVariable Long roomId
+    ) {
+        roomService.chatRoomOut(roomId);
+
+        return ResponseEntity.ok(new ResponseMessage("exit room", "success"));
+    }
+
+    @ResponseBody
+    @PostMapping(ApiPaths.CHAT_ROOM_INVITE)
+    public ResponseEntity<ResponseMessage> inviteRoom(
+            @PathVariable Long roomId,
+            @RequestBody InviteMemberRequestDto inviteMemberRequestDto
+    ) {
+        try {
+            roomService.chatRoomInvite(roomId, inviteMemberRequestDto.getMemberNickname());
+            return ResponseEntity.ok(new ResponseMessage("success", null));
+        } catch (Exception e) {
+            log.error("invite room failed", e);
+            return ResponseEntity.badRequest().body(new ResponseMessage("failed", null));
+        }
 
 
+    }
 }

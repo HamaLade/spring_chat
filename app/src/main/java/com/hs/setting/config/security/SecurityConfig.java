@@ -28,8 +28,10 @@ public class SecurityConfig {
                                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(
-                        (authorizeRequest) ->
-                                authorizeRequest.anyRequest().permitAll()
+                        (authorizeRequest) -> // 로그인 빼고 전부 접근 불가
+                                authorizeRequest
+                                        .requestMatchers("/", "/favicon.ico", "/members/login", "/members/signup", "members/logout", "/boards/**").permitAll()
+                                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(new UserAuthenticationFilter(memberAuthService), UsernamePasswordAuthenticationFilter.class)
                 .formLogin(AbstractHttpConfigurer::disable)

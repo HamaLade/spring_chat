@@ -1,17 +1,33 @@
 package com.hs.presentation.home.controller;
 
+import com.hs.application.member.service.MemberAuthService;
+import com.hs.application.room.dto.ChatRoomInfo;
+import com.hs.application.room.service.RoomService;
 import com.hs.presentation.ApiPaths;
+import com.hs.setting.utils.member.MemberUtils;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+
 /**
  * index 화면 컨트롤러
  */
+@RequiredArgsConstructor
 @Controller
 public class HomeController {
+
+    private final RoomService roomService;
 
     /**
      * index 화면
@@ -21,6 +37,13 @@ public class HomeController {
      */
     @GetMapping(ApiPaths.HOME)
     public String home(Model model) {
+
+        // annonymous 인증이 아닐 때만 채팅방 목록을 보여줌
+        if (MemberUtils.isNotAnnonyMousUser()) {
+            List<ChatRoomInfo> joinedChatRooms =  roomService.getJoinedChatRoom(PageRequest.of(0, 30, Sort.Direction.DESC, "id")).getContent();
+            model.addAttribute("joinedChatRooms", joinedChatRooms);
+        }
+
         model.addAttribute("loginPage", ApiPaths.MEMBER_LOGIN);
         model.addAttribute("signupPage", ApiPaths.MEMBER_SIGNUP);
         return "home";

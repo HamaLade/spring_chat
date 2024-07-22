@@ -36,16 +36,13 @@ public class BoardService {
 
     public BoardPostDetailResponseDto getNoticeDetail(Long postId) {
 
-        BoardPost boardPost = boardPostRepository.findById(postId).orElseThrow(() -> {
-            log.error("cannot find board post. id: {}", postId);
-            return new BoardPostNotFoundException("게시글을 찾을 수 없습니다.");
-        });
+        BoardPost boardPost = boardPostRepository.findById(postId).orElseThrow(BoardPostNotFoundException::new);
 
         BoardPostDetailResponseDto boardPostDetailResponseDto = new BoardPostDetailResponseDto(
                 boardPost.getId(),
                 boardPost.getTitle(),
                 boardPost.getTextContent(),
-                "",
+                "", // 글 쓴이의 ID는 nullable (어드민 공지)
                 boardPost.getCreateDate(),
                 boardPost.getUpdateDate(),
                 null

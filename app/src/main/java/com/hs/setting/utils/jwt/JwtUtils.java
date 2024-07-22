@@ -33,6 +33,10 @@ public class JwtUtils {
                 .orElse(null);
     }
 
+    public static boolean existsAccessTokenCookie() {
+        return findAccessTokenCookie() != null;
+    }
+
     public static boolean existsRefreshTokenCookie() {
         return findRefreshTokenCookie() != null;
     }

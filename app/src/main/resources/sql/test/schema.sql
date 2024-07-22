@@ -8,8 +8,9 @@ password varchar(250) not null,
 role varchar(30) not null,
 created_date timestamp(3) not null default current_timestamp,
 update_date timestamp(3),
-primary key(login_id)
+primary key(id)
 );
+
 
 
 --board
@@ -54,6 +55,22 @@ primary key(id)
 
 
 
+-- chat
+drop table if exists `chat`;
+create table `chat`(
+id bigint not null auto_increment,
+chat_type varchar(50) not null,
+message varchar(500),
+room_id bigint not null,
+sender_nickname varchar(50),
+has_files tinyint not null,
+create_date timestamp(3) not null default current_timestamp,
+primary key(id),
+foreign key(room_id) references room(id)
+);
+
+
+
 --participant
 drop table if exists `participant`;
 create table `participant`(
@@ -63,7 +80,8 @@ member_id bigint not null,
 invitable tinyint not null,
 create_date timestamp(3) not null default current_timestamp,
 update_date timestamp(3),
-primary key(id)
+primary key(id),
+foreign key(room_id) references room(id)
 );
 
 

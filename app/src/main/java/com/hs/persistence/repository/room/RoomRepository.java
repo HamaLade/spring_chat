@@ -37,7 +37,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     // 공개된 채팅방 페이징
     @Query("SELECT new com.hs.application.room.dto.ChatRoomInfo(r.id, r.roomName, r.isPrivate, " +
             "COUNT(p)) " +
-            "FROM Room r LEFT JOIN r.participants p " +
+            "FROM Room r INNER JOIN Participant p on r=p.room " +
             "WHERE r.isPrivate = false " +
             "GROUP BY r.id, r.roomName, r.isPrivate " +
             "ORDER BY r.id DESC")
@@ -46,7 +46,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     // 공개된 채팅방 방 이름 검색 페이징
     @Query("SELECT new com.hs.application.room.dto.ChatRoomInfo(r.id, r.roomName, r.isPrivate, " +
             "COUNT(p)) " +
-            "FROM Room r LEFT JOIN r.participants p " +
+            "FROM Room r INNER JOIN Participant p on r=p.room " +
             "WHERE r.isPrivate = false " +
             "AND r.roomName LIKE %:roomName% " +
             "GROUP BY r.id, r.roomName, r.isPrivate " +
@@ -56,8 +56,9 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     // memberId를 통해 해당 member가 참여한 페이지를 ChatRoomInfo로 변환
     @Query("SELECT new com.hs.application.room.dto.ChatRoomInfo(r.id, r.roomName, r.isPrivate, " +
             "COUNT(p)) " +
-            "FROM Room r LEFT JOIN r.participants p " +
-            "WHERE r IN (SELECT p.room FROM Participant p WHERE p.id = :memberId) " +
+            "FROM Room r INNER JOIN Participant p on r=p.room " +
+//            "WHERE r IN (SELECT p.room FROM Participant p WHERE p.id = :memberId) " +
+            "WHERE p.memberId = :memberId " +
             "GROUP BY r.id, r.roomName, r.isPrivate " +
             "ORDER BY r.id DESC")
     Page<ChatRoomInfo> findAllByMemberIdToChatRoomInfo(Long memberId, Pageable pageable);

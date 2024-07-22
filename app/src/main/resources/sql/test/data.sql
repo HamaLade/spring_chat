@@ -95,3 +95,11 @@ insert into room (room_name, is_activated) values ('room18', 0);
 insert into room (room_name, is_activated) values ('room19', 0);
 insert into room (room_name, is_activated) values ('room20', 0);
 insert into room (room_name, is_activated) values ('room21', 0);
+insert into room (room_name, is_activated) values ('private room01', 1);
+
+insert into participant (room_id, member_id, inviteable)
+select r.id, m.id, 1
+from room r, member m
+where r.room_name = 'private room01'
+ and (m.login_id='test01' or m.login_id='test02' or m.login_id='test03' or m.login_id='test04' or m.login_id='test05');
+;

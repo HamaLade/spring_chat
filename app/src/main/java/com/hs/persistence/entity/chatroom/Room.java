@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -37,9 +38,18 @@ public class Room {
     @Column(nullable = false)
     private LocalDateTime createDate;
 
+    @LastModifiedDate
+    private LocalDateTime updateDate;
+
     public Room(String roomName, boolean isPrivate) {
         this.roomName = roomName;
         this.isPrivate = isPrivate;
     }
+
+    public void addParticipant(Participant participant) {
+        this.participants.add(participant);
+        participant.relationWithRoom(this);
+    }
+
 
 }

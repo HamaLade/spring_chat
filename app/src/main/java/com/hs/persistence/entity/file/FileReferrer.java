@@ -7,6 +7,7 @@ public enum FileReferrer {
 
     MEMBER, // 회원
     BOARD, // 게시판
-    CHATROOM // 채팅방
+    CHATROOM, // 채팅방
+    CHAT // 채팅
 
 }

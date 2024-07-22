@@ -45,7 +45,16 @@ public class ResponseMessage {
     }
 
     public static ResponseEntity<ResponseMessage> errorResponseEntity(Errors error, String message, Exception e) {
-        return ResponseEntity.status(error.getStatus()).body(new ResponseMessage("error", new ErrorInfo(error.getMessage(), error.getCode(), error.getStatus(), e.getMessage())));
+        return ResponseEntity.status(error.getStatus()).body(new ResponseMessage(
+                        "error"
+                        , new ErrorInfo(
+                                error.getDefaultErrorMessage()
+                                , error.getCode()
+                                , error.getStatus()
+                                , e.getMessage()
+                        )
+                )
+        );
     }
 
 }

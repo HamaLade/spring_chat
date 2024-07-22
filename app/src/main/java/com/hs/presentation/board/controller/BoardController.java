@@ -36,7 +36,7 @@ public class BoardController {
     ) {
         Page<BoardPostResponseDto> noticePage = boardService.getNoticePage(pageable);
 
-        return ResponseEntity.ok(new ResponseMessage("notice board", noticePage));
+        return ResponseEntity.ok(new ResponseMessage("ok", noticePage));
     }
 
     @GetMapping(ApiPaths.GET_NOTICE_BOARD_PAGE)

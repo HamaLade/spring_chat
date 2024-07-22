@@ -1,9 +1,9 @@
 package com.hs.application.room.dto;
 
-import com.hs.persistence.entity.chatroom.Room;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -15,8 +15,13 @@ public class ChatRoomDetailInfo {
 
     private Long chatRoomId;
     private String chatRoomName;
+    private Long memberId;
+    private String memberNickname;
     private Boolean isPrivate;
     private List<Participant> participants;
+    // 최근 메세지들
+    private List<ChatMessageInfo> recentMessages;
+
 
     @Getter
     @Setter
@@ -24,25 +29,49 @@ public class ChatRoomDetailInfo {
 
         private Long participantId;
         private Long memberId;
-        private String memberNickName;
+        private String memberNickname;
         private Boolean invitable;
 
-        public Participant(Long participantId, Long memberId, String memberNickName, Boolean invitable) {
+        public Participant(Long participantId, Long memberId, String memberNickname, Boolean invitable) {
             this.participantId = participantId;
             this.memberId = memberId;
-            this.memberNickName = memberNickName;
+            this.memberNickname = memberNickname;
             this.invitable = invitable;
         }
     }
 
+    @Getter
+    @Setter
+    public static class ChatMessageInfo {
+        private String message;
+        private String senderNickname;
+        private Boolean hasFiles;
+        private LocalDateTime createdAt;
+
+        public ChatMessageInfo(String message, String senderNickname, Boolean hasFiles, LocalDateTime createdAt) {
+            this.message = message;
+            this.senderNickname = senderNickname;
+            this.hasFiles = hasFiles;
+            this.createdAt = createdAt;
+        }
+    }
+
     public ChatRoomDetailInfo(
-            Room room,
-            List<Participant> participantMap
+            Long chatRoomId,
+            String chatRoomName,
+            Long memberId,
+            String memberNickname,
+            Boolean isPrivate,
+            List<Participant> participantMap,
+            List<ChatMessageInfo> recentMessages
     ) {
-        this.chatRoomId = room.getId();
-        this.chatRoomName = room.getRoomName();
-        this.isPrivate = room.getIsPrivate();
+        this.chatRoomId = chatRoomId;
+        this.chatRoomName = chatRoomName;
+        this.memberId = memberId;
+        this.memberNickname = memberNickname;
+        this.isPrivate = isPrivate;
         this.participants = participantMap;
+        this.recentMessages = recentMessages;
     }
 
 }

@@ -5,11 +5,13 @@ import lombok.Getter;
 @Getter
 public class ChatMessageSend {
 
-    private Long memberId;
+    private ChatType chatType;
+    private String memberNickname;
     private String textContent;
 
-    public ChatMessageSend(Long memberId, String textContent) {
-        this.memberId = memberId;
+    public ChatMessageSend(ChatType chatType, String memberNickname, String textContent) {
+        this.chatType = chatType;
+        this.memberNickname = memberNickname;
         this.textContent = textContent;
     }
 

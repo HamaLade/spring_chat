@@ -64,8 +64,6 @@
             text-align: center;
         }
     </style>
-    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
-    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
 </head>
 <body>
 <div class="login-container">
@@ -107,21 +105,6 @@
                 document.getElementById('error-message').innerText = json.error.message;
                 return;
             }
-            // 웹 소켓 STOMP 연결, 실패 시 alert로 채팅 소켓 서버 연결 실패 메시지 출력
-            let socket = new SockJS('http://localhost:8081/chat');
-            let stompClient = Stomp.over(socket);
-            // stompClient.connect({'token': json.data.accessToken}, function () {});
-            let headers = {
-                'token': json.data.accessTokenInfo.token
-            };
-            console.log(json);
-            stompClient.connect(headers, function (frame) {
-                stompClient.subscribe('/user/notice', function (response) {
-                    alert(response);
-                });
-            }, function () {
-                alert('채팅 소켓 서버 연결 실패');
-            });
             location.href = '/';
         });
     });

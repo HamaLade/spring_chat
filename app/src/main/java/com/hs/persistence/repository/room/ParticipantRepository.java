@@ -20,6 +20,8 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
 
     Optional<Participant> findByRoomIdAndMemberId(Long roomId, Long memberId);
 
+    boolean existsByRoomIdAndMemberId(Long roomId, Long memberId);
+
     @Query("SELECT new com.hs.application.room.dto.ChatRoomDetailInfo$Participant(" +
             "p.id, p.memberId, m.nickname, p.invitable) " +
             "FROM Room r " +

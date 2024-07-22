@@ -13,4 +13,12 @@ public class MemberUtils {
         return (MemberUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
+    public static boolean isAnnonyMousUser() {
+        return SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals(ANNONYMOUS_USER);
+    }
+
+    public static boolean isNotAnnonyMousUser() {
+        return !SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals(ANNONYMOUS_USER);
+    }
+
 }
