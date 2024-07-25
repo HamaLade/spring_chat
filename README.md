@@ -20,20 +20,39 @@
 
 ### 웹 어플리케이션 구조
 ```
-src/
-├── main/
-│   ├── java/com/hs/
-│   │   ├── config/
-│   │   ├── controller/
-│   │   ├── domain/
-│   │   ├── dto/
-│   │   ├── repository/
-│   │   ├── security/
-│   │   ├── service/
-│   │   └── utils/
-│   └── resources/
-└── test/
-└── java/com/hs/
+app/
+└── src/
+    └── main/
+        └── java/
+            └── com/
+                └── hs/
+                    ├── application/
+                    │   ├── auth/
+                    │   ├── board/
+                    │   ├── member/
+                    │   └── room/
+                    ├── persistence/
+                    │   ├── entity/
+                    │   └── repository/
+                    └── presentation/
+                        ├── auth/
+                        ├── board/
+                        ├── chat/
+                        ├── error/
+                        ├── exception/
+                        └── home/
+websocket/
+└── src/
+    └── main/
+        └── java/
+            └── com/
+                └── hs/
+                    ├── application/
+                    │   ├── chat/
+                    │   └── websocket/
+                    ├── persistence/
+                    └── presentation/
+                        └── chat/
 ```
 ## 새로운 기술 도입 및 학습
 
