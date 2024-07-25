@@ -85,5 +85,5 @@ websocket/
 
 
 ## API 문서
-- [웹 페이지 API](https://hamalade.github.io/spring_chat/app/main.html)
+- [웹 페이지 API](https://hamalade.github.io/spring_chat/)
   - API 문서는 Spring REST Docs를 통해 생성되었습니다.
