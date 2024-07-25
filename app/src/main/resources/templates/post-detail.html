@@ -85,6 +85,20 @@
             font-size: 14px;
             color: #666666;
         }
+
+        .edit-button {
+            background-color: #757575;
+            color: #ffffff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .edit-button:hover {
+            background-color: #5a5a5a;
+        }
+
     </style>
 </head>
 <body>
@@ -104,6 +118,9 @@
 <div class="content-wrapper">
     <div class="main-content">
         <div class="post-detail">
+            <div sec:authorize="hasRole('ROLE_ADMIN')" style="margin-top: 20px;">
+                <a th:href="@{'/boards/notice/edit/' + ${post.id}}" class="edit-button">수정</a>
+            </div>
             <h2 th:text="${post.title}">게시글 제목</h2>
             <p class="post-meta">
                 <span th:text="${post.writerNickname}">작성자</span> |
@@ -112,7 +129,7 @@
                     | 수정일: <span th:text="${#temporals.format(post.modifiedDate, 'yyyy-MM-dd HH:mm')}">수정일</span>
                 </span>
             </p>
-            <p th:text="${post.textContent}">게시글 내용</p>
+            <p th:utext="${post.textContent}">게시글 내용</p>
             <div th:if="${post.file != null}">
                 <p>첨부 파일: <a th:href="${post.file}" th:text="${post.file}">파일 링크</a></p>
             </div>

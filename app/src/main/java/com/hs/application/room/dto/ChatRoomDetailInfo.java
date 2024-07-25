@@ -18,6 +18,7 @@ public class ChatRoomDetailInfo {
     private Long memberId;
     private String memberNickname;
     private Boolean isPrivate;
+    private String authCode;
     private List<Participant> participants;
     // 최근 메세지들
     private List<ChatMessageInfo> recentMessages;

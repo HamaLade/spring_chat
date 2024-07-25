@@ -1,5 +1,6 @@
 package com.hs.presentation.auth.controller;
 
+import com.google.common.util.concurrent.RateLimiter;
 import com.hs.application.member.dto.MemberAuthInfo;
 import com.hs.application.member.service.MemberAuthService;
 import com.hs.presentation.ApiPaths;
@@ -7,12 +8,15 @@ import com.hs.presentation.ResponseMessage;
 import com.hs.presentation.auth.dto.MemberLoginRequestDto;
 import com.hs.presentation.auth.dto.MemberSearchRequestDto;
 import com.hs.presentation.auth.dto.MemberSignUpRequestDto;
+import com.hs.presentation.error.Errors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -28,6 +32,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberController {
 
+    private final RateLimiter rateLimiter = RateLimiter.create(0.25);
     private final MemberAuthService memberAuthService;
 
     /**
@@ -66,6 +71,15 @@ public class MemberController {
     @ResponseBody
     @PostMapping(ApiPaths.MEMBER_SIGNUP)
     public ResponseEntity<ResponseMessage> signupProcess(@RequestBody @Validated MemberSignUpRequestDto memberSignUpRequestDto) {
+
+        if (!rateLimiter.tryAcquire()) {
+            Errors tooManyRequest = Errors.TOO_MANY_REQUEST;
+            return ResponseMessage.errorResponseEntity(
+                    tooManyRequest
+                    , tooManyRequest.getDefaultErrorMessage()
+            );
+        }
+
         memberAuthService.signUp(
                 memberSignUpRequestDto.getLoginId(),
                 memberSignUpRequestDto.getNickname(),
@@ -80,10 +94,11 @@ public class MemberController {
      * @return 탈퇴 성공 시 인덱스 페이지로 리다이렉트
      */
     @ResponseBody
-    @PostMapping(ApiPaths.MEMBER_WITHDRAW)
+    @DeleteMapping(ApiPaths.MEMBER_WITHDRAW)
     public ResponseEntity<ResponseMessage> withdrawProcess() {
 
         memberAuthService.withdraw();
+        memberAuthService.logout();
         return ResponseEntity.ok(new ResponseMessage("ok", null));
     }
 

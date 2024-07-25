@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-public class HttpServletUtils {
+public class HttpServletUtil {
 
     public static HttpServletRequest getHttpServletRequest() {
         return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();

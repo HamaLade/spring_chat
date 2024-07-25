@@ -207,15 +207,30 @@
 
     function connect() {
         return new Promise((resolve, reject) => {
-            let socket = new SockJS('http://localhost:8081/chat');
+            let socket = new SockJS('http://localhost:8081/chat', null, {
+                transports: ["websocket", "xhr-streaming", "xhr-polling"],
+                withCredentials: true
+            });
+            let connectionTimeout = setTimeout(() => {
+                alert('서버와 연결할 수 없습니다. 다시 시도해주세요.');
+                socket.close();
+                reject('Connection timeout');
+            }, 2000);
             stompClient = Stomp.over(socket);
-            stompClient.connect({}, function (frame) {
+            stompClient.connect({
+                Authorization: [[${roomDetailInfo.authCode}]]
+            }, function (frame) {
                 stompClient.subscribe('/subscribe/chat/room/' + roomId, function (message) {
                     showMessage(JSON.parse(message.body));
                 });
                 stompClient.subscribe('/subscribe/chat/join/room/' + roomId, function (message) {
                     showParticipants(JSON.parse(message.body));
                 });
+                // 에러 메시지 구독 추가
+                stompClient.subscribe('/queue/errors/' + memberNickname, function (message) {
+                    alert('에러: ' + message.body)
+                });
+                clearTimeout(connectionTimeout);
                 resolve(stompClient);
             }, error => {
                 console.error('STOMP error', error);
@@ -251,6 +266,7 @@
             showParticipants(null);
         } catch (error) {
             console.error('Failed to set up chat room', error);
+            window.location.href = '/';
         }
     }
 

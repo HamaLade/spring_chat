@@ -7,10 +7,10 @@ import com.hs.application.member.exception.*;
 import com.hs.application.member.model.MemberUserDetails;
 import com.hs.persistence.entity.member.Member;
 import com.hs.persistence.repository.memeber.MemberRepository;
-import com.hs.setting.utils.jwt.JwtUtils;
+import com.hs.setting.utils.jwt.JwtUtil;
 import com.hs.setting.utils.jwt.MemberJwtProperties;
 import com.hs.setting.utils.jwt.TokenInfo;
-import com.hs.setting.utils.web.HttpServletUtils;
+import com.hs.setting.utils.web.HttpServletUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -28,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -114,7 +115,7 @@ public class MemberAuthService implements AuthService {
         accessTokenCookie.setMaxAge((int) memberJwtProperties.getAccessTokenExpiredTime());
         accessTokenCookie.setPath("/");
 
-        HttpServletUtils.getHttpServletResponse().addCookie(accessTokenCookie);
+        HttpServletUtil.getHttpServletResponse().addCookie(accessTokenCookie);
 
         return new TokenInfo(accessToken, accessTokenExpireTime);
     }
@@ -142,7 +143,7 @@ public class MemberAuthService implements AuthService {
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setMaxAge((int) memberJwtProperties.getRefreshTokenExpiredTime());
         refreshTokenCookie.setPath("/");
-        HttpServletUtils.getHttpServletResponse().addCookie(refreshTokenCookie);
+        HttpServletUtil.getHttpServletResponse().addCookie(refreshTokenCookie);
 
         return new TokenInfo(refreshToken, refreshTokenExpireTime);
     }
@@ -153,7 +154,7 @@ public class MemberAuthService implements AuthService {
      */
     public void logout() {
 
-        HttpServletResponse response = HttpServletUtils.getHttpServletResponse();
+        HttpServletResponse response = HttpServletUtil.getHttpServletResponse();
 
         Cookie accessTokenCookie = new Cookie(MemberJwtProperties.ACCESS_TOKEN_NAME, null);
         // 토큰 생성시의 쿠키속성과 속성들이 일치해야 적용된다
@@ -213,7 +214,7 @@ public class MemberAuthService implements AuthService {
     public UserDetails authorization() {
 
         UserDetails userDetails = null;
-        Cookie accessTokenCookie = JwtUtils.findAccessTokenCookie();
+        Cookie accessTokenCookie = JwtUtil.findAccessTokenCookie();
 
         if (accessTokenCookie != null) {
             userDetails = accessTokenAuthorization(accessTokenCookie.getValue());
@@ -223,7 +224,7 @@ public class MemberAuthService implements AuthService {
             return userDetails;
         }
 
-        Cookie refreshTokenCookie = JwtUtils.findRefreshTokenCookie();
+        Cookie refreshTokenCookie = JwtUtil.findRefreshTokenCookie();
 
         if (refreshTokenCookie != null) {
             userDetails = refreshTokenAuthorization(refreshTokenCookie.getValue());
@@ -292,6 +293,7 @@ public class MemberAuthService implements AuthService {
      * 회원 탈퇴
      * @throws MemberNotFoundException 탈퇴 대상의 회원을 찾을 수 없을 때
      */
+    @Transactional
     public void withdraw() {
         UserDetails userDetails = authorization();
         if (userDetails == null) {
@@ -309,7 +311,7 @@ public class MemberAuthService implements AuthService {
 
         MemberUserDetails memberUserDetails = (MemberUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        Cookie refreshTokenCookie = JwtUtils.findRefreshTokenCookie();
+        Cookie refreshTokenCookie = JwtUtil.findRefreshTokenCookie();
         if (refreshTokenCookie != null) {
             ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
             valueOperations.set(refreshTokenCookie.getValue(), memberUserDetails.getUsername());

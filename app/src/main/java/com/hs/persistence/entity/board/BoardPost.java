@@ -63,4 +63,20 @@ public class BoardPost {
         return boardPost;
     }
 
+    public BoardPost(Long boardId, String title, String textContent, boolean hasFile) {
+        this.boardId = boardId;
+        this.writerId = null;
+        this.title = title;
+        this.textContent = textContent;
+        this.hasFile = hasFile;
+    }
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+
+    public void updateTextContent(String textContent) {
+        this.textContent = textContent;
+    }
+
 }

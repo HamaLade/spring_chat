@@ -21,6 +21,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -103,7 +104,7 @@ public class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberSignUpRequestDto))
                 )
-                .andExpect(status().is(Errors.SIGNUP_FAILED.getStatus()))
+                .andExpect(status().is(Errors.MEMBER_ID_EXISTS.getStatus()))
                 .andDo(print())
                 .andDo(
                         document("members-sign-up-failed-case01",
@@ -135,7 +136,7 @@ public class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberSignUpRequestDto))
                 )
-                .andExpect(status().is(Errors.SIGNUP_FAILED.getStatus()))
+                .andExpect(status().is(Errors.MEMBER_NICKNAME_EXISTS.getStatus()))
                 .andDo(print())
                 .andDo(
                         document("members-sign-up-failed-case02",
@@ -225,6 +226,7 @@ public class MemberControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "USER")
     @DisplayName("회원 로그아웃")
     void logout() throws Exception {
 

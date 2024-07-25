@@ -31,7 +31,7 @@ public class Room {
     @ColumnDefault("0")
     private Boolean isPrivate;
 
-    @OneToMany(mappedBy = "room", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "room", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<Participant> participants = new ArrayList<>();
 
     @CreatedDate

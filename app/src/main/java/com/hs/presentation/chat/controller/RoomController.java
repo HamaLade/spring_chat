@@ -1,5 +1,6 @@
 package com.hs.presentation.chat.controller;
 
+import com.google.common.util.concurrent.RateLimiter;
 import com.hs.application.member.service.MemberAuthService;
 import com.hs.application.room.dto.ChatRoomDetailInfo;
 import com.hs.application.room.dto.ChatRoomInfo;
@@ -8,16 +9,20 @@ import com.hs.presentation.ApiPaths;
 import com.hs.presentation.ResponseMessage;
 import com.hs.presentation.chat.dto.CreateRoomRequestDto;
 import com.hs.presentation.chat.dto.InviteMemberRequestDto;
+import com.hs.presentation.error.Errors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 /**
  * 채팅방 컨트롤러
@@ -27,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class RoomController {
 
+    private final RateLimiter rateLimiter = RateLimiter.create(0.25);
     private final RoomService roomService;
     private final MemberAuthService memberAuthService;
 
@@ -55,6 +61,15 @@ public class RoomController {
     public ResponseEntity<ResponseMessage> createRoom(
             @RequestBody CreateRoomRequestDto createRoomRequest
     ) {
+
+        if (!rateLimiter.tryAcquire()) {
+            Errors tooManyRequest = Errors.TOO_MANY_REQUEST;
+            return ResponseMessage.errorResponseEntity(
+                            tooManyRequest
+                            , tooManyRequest.getDefaultErrorMessage()
+                    );
+        }
+
         roomService.createRoom(createRoomRequest.getRoomName(), createRoomRequest.getIsPrivate());
 
         return ResponseEntity.ok(new ResponseMessage("create room", "success"));
@@ -65,7 +80,13 @@ public class RoomController {
             @PathVariable Long roomId,
             Model model
     ) {
-        roomService.chatRoomJoin(roomId);
+        try {
+            roomService.chatRoomJoin(roomId);
+        } catch (Exception e) {
+            log.error("채팅방 정보 조회 실패", e);
+            model.addAttribute("error", e.getMessage());
+            return "error";
+        }
         memberAuthService.saveTokenToRedis();
 
         ChatRoomDetailInfo roomDetailInfo = roomService.getRoomDetailInfo(roomId);

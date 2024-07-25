@@ -2,6 +2,7 @@ package com.hs.persistence.repository.room;
 
 import com.hs.application.room.dto.ChatRoomDetailInfo;
 import com.hs.persistence.entity.chatroom.Participant;
+import com.hs.persistence.entity.chatroom.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -31,6 +32,11 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
     List<ChatRoomDetailInfo.Participant> findParticipantsByRoomId(@Param("roomId") Long roomId);
 
     @Modifying
+    @Query("DELETE FROM Participant p WHERE p.room.id = :roomId AND p.memberId = :memberId")
     int deleteByRoomIdAndMemberId(Long roomId, Long memberId);
+
+    @Modifying
+    @Query("DELETE FROM Participant p WHERE p.room = :room")
+    int deleteAllByRoom(Room room);
 
 }

@@ -1,7 +1,5 @@
 package com.hs.settings.utils;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,12 +10,9 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,7 +27,7 @@ public class StompHandler implements ChannelInterceptor {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
         if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
-            String token = extractTokenFromCookie(accessor);
+            String token = accessor.getNativeHeader("Authorization").get(0);
 
             if (token != null) {
                 String value = redisTemplate.opsForValue().get(token);
@@ -46,7 +41,20 @@ public class StompHandler implements ChannelInterceptor {
                     redisTemplate.delete(token);
                 } else {
                     log.error("소켓 연결 실패: token: {}", token);
+                    accessor.setLeaveMutable(true);
+                    return null;
                 }
+            } else {
+                log.error("소켓 연결 실패: auth token is null");
+                accessor.setLeaveMutable(true);
+                return null;
+            }
+        }
+        if (accessor != null && StompCommand.SEND.equals(accessor.getCommand())) {
+            if (accessor.getUser() == null) {
+                log.error("비인증된 사용자의 메세지 전송");
+                accessor.setLeaveMutable(true);
+                return null;
             }
         }
 
@@ -54,7 +62,7 @@ public class StompHandler implements ChannelInterceptor {
     }
 
     private String extractTokenFromCookie(StompHeaderAccessor accessor) {
-        List<String> cookieList = accessor.getNativeHeader("Cookie");
+        List<String> cookieList = accessor.getNativeHeader("Authorization");
         if (cookieList != null && !cookieList.isEmpty()) {
             for (String cookie : cookieList) {
                 String[] cookies = cookie.split(";");

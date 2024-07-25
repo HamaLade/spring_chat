@@ -1,14 +1,14 @@
 package com.hs.setting.utils.jwt;
 
-import com.hs.setting.utils.web.HttpServletUtils;
+import com.hs.setting.utils.web.HttpServletUtil;
 import jakarta.servlet.http.Cookie;
 
 import java.util.Arrays;
 
-public class JwtUtils {
+public class JwtUtil {
 
     public static Cookie findAccessTokenCookie() {
-        Cookie[] cookies = HttpServletUtils.getHttpServletRequest().getCookies();
+        Cookie[] cookies = HttpServletUtil.getHttpServletRequest().getCookies();
 
         if (cookies == null || cookies.length == 0) {
             return null;
@@ -21,7 +21,7 @@ public class JwtUtils {
     }
 
     public static Cookie findRefreshTokenCookie() {
-        Cookie[] cookies = HttpServletUtils.getHttpServletRequest().getCookies();
+        Cookie[] cookies = HttpServletUtil.getHttpServletRequest().getCookies();
 
         if (cookies == null || cookies.length == 0) {
             return null;

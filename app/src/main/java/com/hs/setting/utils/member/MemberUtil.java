@@ -3,7 +3,7 @@ package com.hs.setting.utils.member;
 import com.hs.application.member.model.MemberUserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-public class MemberUtils {
+public class MemberUtil {
 
     private static final String ANNONYMOUS_USER = "anonymousUser";
 

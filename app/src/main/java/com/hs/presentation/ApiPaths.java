@@ -22,6 +22,8 @@ public class ApiPaths {
     public static final String GET_NOTICE_BOARD = BOARD_ROOT_PATH + "/notice";
     public static final String GET_NOTICE_BOARD_PAGE = BOARD_ROOT_PATH + "/notice/page";
     public static final String GET_BOARD_POST_DETAIL = BOARD_ROOT_PATH + "/post/{postId}";
+    public static final String WRITE_NOTICE_POST = BOARD_ROOT_PATH + "/notice/write";
+    public static final String EDIT_NOTICE_POST = BOARD_ROOT_PATH + "/notice/edit/{postId}";
 
     // chat
     public static final String CHAT_ROOT_PATH = "/chat";

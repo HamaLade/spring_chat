@@ -1,6 +1,7 @@
 package com.hs.application.board.dto;
 
 import com.hs.persistence.entity.file.File;
+import com.hs.setting.utils.markdown.MarkDownUtil;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -47,5 +48,9 @@ public class BoardPostDetailResponseDto {
 
     public void setFiles(Collection<com.hs.persistence.entity.file.File> files) {
         this.file = files.stream().map(File::new).toArray(File[]::new);
+    }
+
+    public void textContentMarkDownToHtml() {
+        this.textContent = MarkDownUtil.convertMarkDownToHtml(this.textContent);
     }
 }

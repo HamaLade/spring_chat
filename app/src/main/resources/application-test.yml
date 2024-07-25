@@ -25,3 +25,6 @@ board:
   notice:
     board:
       name: notice
+
+kafka:
+  enabled: false

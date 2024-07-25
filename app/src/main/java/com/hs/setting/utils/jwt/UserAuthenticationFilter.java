@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,11 +28,11 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
         UserDetails userDetails = null;
 
         try {
-            if (JwtUtils.existsAccessTokenCookie()) {
-                Cookie accessTokenCookie = JwtUtils.findAccessTokenCookie();
+            if (JwtUtil.existsAccessTokenCookie()) {
+                Cookie accessTokenCookie = JwtUtil.findAccessTokenCookie();
                 userDetails = memberAuthService.accessTokenAuthorization(accessTokenCookie.getValue());
-            } else if (JwtUtils.existsRefreshTokenCookie()) {
-                Cookie refreshTokenCookie = JwtUtils.findRefreshTokenCookie();
+            } else if (JwtUtil.existsRefreshTokenCookie()) {
+                Cookie refreshTokenCookie = JwtUtil.findRefreshTokenCookie();
                 userDetails = memberAuthService.refreshTokenAuthorization(refreshTokenCookie.getValue());
                 memberAuthService.generateAccessToken(Long.valueOf(userDetails.getUsername()), Instant.now());
             }

@@ -8,15 +8,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Objects;
 
 @Slf4j
-@RestControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ResponseBody
     @ExceptionHandler(ApplicationException.class)
     public ResponseEntity<ResponseMessage> handleApplicationException(ApplicationException e) {
         log.error(e.getMessage(), e);
@@ -24,10 +26,10 @@ public class GlobalExceptionHandler {
         return ResponseMessage.errorResponseEntity(
                 Objects.requireNonNullElse(error, Errors.UNDEFINED_ERROR)
                 , e.getMessage()
-                , e
         );
     }
 
+    @ResponseBody
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<ResponseMessage> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
 
@@ -51,7 +53,6 @@ public class GlobalExceptionHandler {
         return ResponseMessage.errorResponseEntity(
                 Errors.INVALID_INPUT_VALUE
                 , badRequestErrorInformation
-                , e
         );
 
     }

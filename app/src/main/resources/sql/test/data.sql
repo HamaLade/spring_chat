@@ -74,30 +74,30 @@ insert into board_post (board_id, writer_id, title, text_content, has_file) valu
 insert into board_post (board_id, writer_id, title, text_content, has_file) values (1, null, 'notice title 50', 'notice content 50', 0);
 insert into board_post (board_id, writer_id, title, text_content, has_file) values (1, null, 'notice title 51', 'notice content 51', 0);
 
-insert into room (room_name, is_activated) values ('room01', 0);
-insert into room (room_name, is_activated) values ('room02', 0);
-insert into room (room_name, is_activated) values ('room03', 0);
-insert into room (room_name, is_activated) values ('room04', 0);
-insert into room (room_name, is_activated) values ('room05', 0);
-insert into room (room_name, is_activated) values ('room06', 0);
-insert into room (room_name, is_activated) values ('room07', 0);
-insert into room (room_name, is_activated) values ('room08', 0);
-insert into room (room_name, is_activated) values ('room09', 0);
-insert into room (room_name, is_activated) values ('room10', 0);
-insert into room (room_name, is_activated) values ('room11', 0);
-insert into room (room_name, is_activated) values ('room12', 0);
-insert into room (room_name, is_activated) values ('room13', 0);
-insert into room (room_name, is_activated) values ('room14', 0);
-insert into room (room_name, is_activated) values ('room15', 0);
-insert into room (room_name, is_activated) values ('room16', 0);
-insert into room (room_name, is_activated) values ('room17', 0);
-insert into room (room_name, is_activated) values ('room18', 0);
-insert into room (room_name, is_activated) values ('room19', 0);
-insert into room (room_name, is_activated) values ('room20', 0);
-insert into room (room_name, is_activated) values ('room21', 0);
-insert into room (room_name, is_activated) values ('private room01', 1);
+insert into room (room_name, is_private) values ('room01', 0);
+insert into room (room_name, is_private) values ('room02', 0);
+insert into room (room_name, is_private) values ('room03', 0);
+insert into room (room_name, is_private) values ('room04', 0);
+insert into room (room_name, is_private) values ('room05', 0);
+insert into room (room_name, is_private) values ('room06', 0);
+insert into room (room_name, is_private) values ('room07', 0);
+insert into room (room_name, is_private) values ('room08', 0);
+insert into room (room_name, is_private) values ('room09', 0);
+insert into room (room_name, is_private) values ('room10', 0);
+insert into room (room_name, is_private) values ('room11', 0);
+insert into room (room_name, is_private) values ('room12', 0);
+insert into room (room_name, is_private) values ('room13', 0);
+insert into room (room_name, is_private) values ('room14', 0);
+insert into room (room_name, is_private) values ('room15', 0);
+insert into room (room_name, is_private) values ('room16', 0);
+insert into room (room_name, is_private) values ('room17', 0);
+insert into room (room_name, is_private) values ('room18', 0);
+insert into room (room_name, is_private) values ('room19', 0);
+insert into room (room_name, is_private) values ('room20', 0);
+insert into room (room_name, is_private) values ('room21', 0);
+insert into room (room_name, is_private) values ('private room01', 1);
 
-insert into participant (room_id, member_id, inviteable)
+insert into participant (room_id, member_id, invitable)
 select r.id, m.id, 1
 from room r, member m
 where r.room_name = 'private room01'

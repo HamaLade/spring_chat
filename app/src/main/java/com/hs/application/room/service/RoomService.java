@@ -12,7 +12,9 @@ import com.hs.persistence.repository.memeber.MemberRepository;
 import com.hs.persistence.repository.room.ChatRepository;
 import com.hs.persistence.repository.room.ParticipantRepository;
 import com.hs.persistence.repository.room.RoomRepository;
-import com.hs.setting.utils.member.MemberUtils;
+import com.hs.setting.utils.jwt.JwtUtil;
+import com.hs.setting.utils.member.MemberUtil;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -61,7 +63,7 @@ public class RoomService {
         );
 
         // 채팅방 생성시 자동으로 생성 요청자가 참가자로 등록
-        MemberUserDetails memberUserDetails = MemberUtils.getMemberUserDetails();
+        MemberUserDetails memberUserDetails = MemberUtil.getMemberUserDetails();
         Member member = memberRepository.findById(Long.parseLong(memberUserDetails.getUsername())).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 사용자입니다.")
         );
@@ -156,7 +158,9 @@ public class RoomService {
                 .collect(Collectors.toList());
         Collections.reverse(recentMessages);
 
-        return new ChatRoomDetailInfo(
+        Cookie refreshTokenCookie = JwtUtil.findRefreshTokenCookie();
+
+        ChatRoomDetailInfo chatRoomDetailInfo = new ChatRoomDetailInfo(
                 room.getId(),
                 room.getRoomName(),
                 member.getId(),
@@ -165,6 +169,8 @@ public class RoomService {
                 participant,
                 recentMessages
         );
+        chatRoomDetailInfo.setAuthCode(refreshTokenCookie.getValue());
+        return chatRoomDetailInfo;
     }
 
     /**
@@ -241,7 +247,7 @@ public class RoomService {
                 (room.getIsPrivate() && remainingParticipants.stream().noneMatch(Participant::getInvitable));
 
         if (shouldDeleteRoom) {
-            participantRepository.deleteAll(room.getParticipants());
+            chatRepository.deleteAllByRoom(room);
             roomRepository.delete(room);
         } else {
             participantRepository.deleteByRoomIdAndMemberId(room.getId(), member.getId());
