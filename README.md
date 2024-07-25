@@ -54,6 +54,10 @@ websocket/
                     └── presentation/
                         └── chat/
 ```
+
+### 데이터베이스 구조
+![다이어그램](diagram.png)
+
 ## 새로운 기술 도입 및 학습
 
 ### Kafka
