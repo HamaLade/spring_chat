@@ -11,7 +11,6 @@ import com.hs.presentation.auth.dto.MemberSignUpRequestDto;
 import com.hs.presentation.error.Errors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -32,7 +31,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberController {
 
-    private final RateLimiter rateLimiter = RateLimiter.create(0.25);
+    private final RateLimiter rateLimiter;
     private final MemberAuthService memberAuthService;
 
     /**

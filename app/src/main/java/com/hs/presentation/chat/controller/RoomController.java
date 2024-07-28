@@ -32,7 +32,7 @@ import java.util.Objects;
 @Controller
 public class RoomController {
 
-    private final RateLimiter rateLimiter = RateLimiter.create(0.25);
+    private final RateLimiter rateLimiter;
     private final RoomService roomService;
     private final MemberAuthService memberAuthService;
 
