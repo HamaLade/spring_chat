@@ -44,7 +44,7 @@ jobs:
       - name: Build app module with prod profile
         run: |
           cd app
-          ./gradlew build -Pspring.profiles.active=prod
+          ../gradlew build -Pspring.profiles.active=prod
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -82,7 +82,7 @@ jobs:
       - name: Build websocket module
         run: |
           cd websocket
-          ./gradlew build
+          ../gradlew build
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
