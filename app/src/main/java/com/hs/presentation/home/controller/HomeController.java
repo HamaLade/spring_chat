@@ -74,7 +74,6 @@ public class HomeController {
     @ResponseBody
     @PostMapping("/")
     public String healthCheck() {
-        // TODO: 단시간에 너무 많은 요청이 들어오지 않도록 제한을 둘 필요가 있음
         return "alive";
     }
 

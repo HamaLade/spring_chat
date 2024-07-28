@@ -11,6 +11,8 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.security.Principal;
 
@@ -22,6 +24,12 @@ public class ChatController {
     private final ChatWebSocketService chatWebSocketService;
     private final MessageRateLimiter rateLimiter;
     private final SimpMessagingTemplate messagingTemplate;
+
+    @ResponseBody
+    @GetMapping("/")
+    public String healthCheck() {
+        return "alive";
+    }
 
     @MessageMapping("/chat/message/{roomId}")
     public void handleChatMessage(@DestinationVariable String roomId,
