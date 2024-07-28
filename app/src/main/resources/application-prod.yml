@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/chat
+    username: ${db-username}
+    password: ${db-password}
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      hbm2ddl.auto: none
+
+  kafka:
+    bootstrap-servers: localhost:9093
+
+jwt:
+  member:
+    access:
+      secret: ${access-token-secret}
+      exp: 300
+    refresh:
+      secret: ${refresh-token-secret}
+      exp: 86400
+
+board:
+  notice:
+    board:
+      name: notice
