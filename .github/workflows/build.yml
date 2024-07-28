@@ -45,6 +45,8 @@ jobs:
         run: |
           chmod +x ./gradlew
           cd app
+          mkdir -p src/main/resources
+          echo "${{ secrets.APPLICATION }}" | base64 --decode > src/main/resources/application-prod.yml
           ../gradlew build -Pspring.profiles.active=prod
 
       - name: Configure AWS credentials
