@@ -73,7 +73,7 @@ insert into board_post (board_id, writer_id, title, text_content, has_file) valu
 insert into board_post (board_id, writer_id, title, text_content, has_file) values (1, null, 'notice title 49', 'notice content 49', 0);
 insert into board_post (board_id, writer_id, title, text_content, has_file) values (1, null, 'notice title 50', 'notice content 50', 0);
 insert into board_post (board_id, writer_id, title, text_content, has_file) values (1, null, 'notice title 51', 'notice content 51', 0);
-insert into board_post (board_id, writer_id, title, text_content, has_file) values (1, null, 'notice title 52', 'notice content 52', 0);
+
 
 insert into room (room_name, is_private) values ('room01', 0);
 insert into room (room_name, is_private) values ('room02', 0);

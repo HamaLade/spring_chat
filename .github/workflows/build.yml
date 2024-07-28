@@ -43,6 +43,7 @@ jobs:
 
       - name: Build app module with prod profile
         run: |
+          chmod +x ./gradlew
           cd app
           ../gradlew build -Pspring.profiles.active=prod
 
@@ -81,6 +82,7 @@ jobs:
 
       - name: Build websocket module
         run: |
+          chmod +x ./gradlew
           cd websocket
           ../gradlew build
 
