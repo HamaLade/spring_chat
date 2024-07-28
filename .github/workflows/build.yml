@@ -8,8 +8,8 @@ on:
 
 env:
   AWS_REGION: ap-northeast-2  # AWS 리전
-  ECR_REPOSITORY_APP: 732800678454.dkr.ecr.ap-northeast-2.amazonaws.com/spring-chat-app-repository  # app 모듈용 ECR 리포지토리 이름
-  ECR_REPOSITORY_WEBSOCKET: 732800678454.dkr.ecr.ap-northeast-2.amazonaws.com/spring-chat-websocket-repository  # websocket 모듈용 ECR 리포지토리 이름
+  ECR_REPOSITORY_APP: spring-chat-app-repository  # app 모듈용 ECR 리포지토리 이름
+  ECR_REPOSITORY_WEBSOCKET: spring-chat-websocket-repository  # websocket 모듈용 ECR 리포지토리 이름
 
 jobs:
   check_changes:
