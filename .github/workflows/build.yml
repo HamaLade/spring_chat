@@ -66,10 +66,9 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           cd app
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_APP:$IMAGE_TAG --build-arg SPRING_PROFILES_ACTIVE=prod .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY_APP:$IMAGE_TAG
-          docker tag $ECR_REGISTRY/$ECR_REPOSITORY_APP:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY_APP:latest
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY_APP:latest
+          docker buildx create --use
+          docker buildx build --platform linux/amd64 -t $ECR_REGISTRY/$ECR_REPOSITORY_APP:$IMAGE_TAG --build-arg SPRING_PROFILES_ACTIVE=prod --push .
+          docker buildx build --platform linux/amd64 -t $ECR_REGISTRY/$ECR_REPOSITORY_APP:latest --build-arg SPRING_PROFILES_ACTIVE=prod --push .
 
   build_and_push_websocket:
     needs: check_changes
@@ -107,7 +106,6 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           cd websocket
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_WEBSOCKET:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY_WEBSOCKET:$IMAGE_TAG
-          docker tag $ECR_REGISTRY/$ECR_REPOSITORY_WEBSOCKET:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY_WEBSOCKET:latest
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY_WEBSOCKET:latest
+          docker buildx create --use
+          docker buildx build --platform linux/amd64 -t $ECR_REGISTRY/$ECR_REPOSITORY_WEBSOCKET:$IMAGE_TAG --push .
+          docker buildx build --platform linux/amd64 -t $ECR_REGISTRY/$ECR_REPOSITORY_WEBSOCKET:latest --push .
