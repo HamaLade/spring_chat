@@ -46,6 +46,7 @@ public class RoomService {
      * @param roomName 채팅방 이름
      * @param isPrivate 비공개 여부
      */
+    @Transactional
     public void createRoom(
             String roomName,
             boolean isPrivate
@@ -79,6 +80,7 @@ public class RoomService {
      * 채팅방 방 이름으로 삭제
      * @param roomName 채팅방 이름
      */
+    @Transactional
     public void deleteRoom(
             String roomName
     ) {
@@ -89,6 +91,7 @@ public class RoomService {
      * 채팅방 방 ID로 삭제
      * @param roomId 채팅방 ID
      */
+    @Transactional
     public void deleteRoom(
             Long roomId
     ) {
