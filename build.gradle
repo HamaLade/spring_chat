@@ -5,7 +5,8 @@ plugins {
 	id "org.asciidoctor.jvm.convert" version "3.3.2"
 }
 
-bootJar.enabled = false // 멀티 모듈 빌드 시 모듈의 jar 파일 생성을 하지 않음
+bootJar.enabled = true // 멀티 모듈 빌드 시 모듈의 jar 파일 생성을 하지 않음 (현재는 GitAction 을 통해 각각을 따로 빌드하여 배포하므로 jar 파일 생성)
+jar.enabled = false;
 
 ext {
 	snippetsDir = file('build/generated-snippets')
