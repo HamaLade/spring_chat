@@ -22,6 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -113,14 +115,16 @@ public class MemberAuthService implements AuthService {
                 .signWith(memberJwtProperties.getAccessKey(), SignatureAlgorithm.HS256)
                 .compact();
 
-        Cookie accessTokenCookie = new Cookie(MemberJwtProperties.ACCESS_TOKEN_NAME, accessToken);
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true);
-        accessTokenCookie.setDomain(cookieDomain);
-        accessTokenCookie.setMaxAge((int) memberJwtProperties.getAccessTokenExpiredTime());
-        accessTokenCookie.setPath("/");
+        ResponseCookie accessTokenCookie = ResponseCookie.from(MemberJwtProperties.ACCESS_TOKEN_NAME, accessToken)
+                .sameSite("None")
+                .httpOnly(true)
+                .secure(true)
+                .domain(cookieDomain)
+                .maxAge(Duration.ofSeconds(memberJwtProperties.getAccessTokenExpiredTime()))
+                .path("/")
+                .build();
 
-        HttpServletUtil.getHttpServletResponse().addCookie(accessTokenCookie);
+        HttpServletUtil.getHttpServletResponse().addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
 
         return new TokenInfo(accessToken, accessTokenExpireTime);
     }
@@ -144,13 +148,16 @@ public class MemberAuthService implements AuthService {
                 .signWith(memberJwtProperties.getRefreshKey(), SignatureAlgorithm.HS512)
                 .compact();
 
-        Cookie refreshTokenCookie = new Cookie(MemberJwtProperties.REFRESH_TOKEN_NAME, refreshToken);
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setDomain(cookieDomain);
-        refreshTokenCookie.setMaxAge((int) memberJwtProperties.getRefreshTokenExpiredTime());
-        refreshTokenCookie.setPath("/");
-        HttpServletUtil.getHttpServletResponse().addCookie(refreshTokenCookie);
+        ResponseCookie refreshTokenCookie = ResponseCookie.from(MemberJwtProperties.REFRESH_TOKEN_NAME, refreshToken)
+                .sameSite("None")
+                .httpOnly(true)
+                .secure(true)
+                .domain(cookieDomain)
+                .maxAge(Duration.ofSeconds(memberJwtProperties.getRefreshTokenExpiredTime()))
+                .path("/")
+                .build();
+
+        HttpServletUtil.getHttpServletResponse().addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 
         return new TokenInfo(refreshToken, refreshTokenExpireTime);
     }
@@ -163,22 +170,27 @@ public class MemberAuthService implements AuthService {
 
         HttpServletResponse response = HttpServletUtil.getHttpServletResponse();
 
-        Cookie accessTokenCookie = new Cookie(MemberJwtProperties.ACCESS_TOKEN_NAME, null);
-        // 토큰 생성시의 쿠키속성과 속성들이 일치해야 적용된다
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true);
-        accessTokenCookie.setDomain(cookieDomain);
-        accessTokenCookie.setMaxAge(0);
-        accessTokenCookie.setPath("/");
-        response.addCookie(accessTokenCookie);
+        ResponseCookie accessTokenCookie = ResponseCookie.from(MemberJwtProperties.ACCESS_TOKEN_NAME, "")
+                .sameSite("None")
+                .httpOnly(true)
+                .secure(true)
+                .domain(cookieDomain)
+                .maxAge(Duration.ofSeconds(0))
+                .path("/")
+                .build();
 
-        Cookie refreshTokenCookie = new Cookie(MemberJwtProperties.REFRESH_TOKEN_NAME, null);
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setDomain(cookieDomain);
-        refreshTokenCookie.setMaxAge(0);
-        refreshTokenCookie.setPath("/");
-        response.addCookie(refreshTokenCookie);
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from(MemberJwtProperties.REFRESH_TOKEN_NAME, "")
+                .sameSite("None")
+                .httpOnly(true)
+                .secure(true)
+                .domain(cookieDomain)
+                .maxAge(Duration.ofSeconds(0))
+                .path("/")
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 
     }
 
