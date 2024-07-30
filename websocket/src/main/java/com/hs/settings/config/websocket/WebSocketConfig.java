@@ -21,8 +21,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/socket")
                 .setAllowedOrigins(
-                        "http://www.spring-chat:8083", "https://www.spring-chat:8083"
-                        , "http://www.spring-chat", "https://www.spring-chat"
+                        "http://www.spring-chat.com:8083", "https://www.spring-chat.com:8083"
+                        , "http://www.spring-chat.com", "https://www.spring-chat.com"
                         , "http://localhost:8083", "https://localhost:8083"
                         , "http://localhost", "https://localhost"
                 )
