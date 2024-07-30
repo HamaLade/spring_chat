@@ -12,8 +12,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "http://localhost:8083", "https://localhost:8083"
                         , "http://localhost", "https://localhost"
-                        , "http://*.spring-chat:8083", "https://*.spring-chat:8083"
-                        , "http://*.spring-chat", "https://*.spring-chat"
+                        , "http://www.spring-chat:8083", "https://www.spring-chat:8083"
+                        , "http://www.spring-chat", "https://www.spring-chat"
                 )
                 .allowedMethods("*")
                 .allowedHeaders("*")
