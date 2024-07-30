@@ -209,9 +209,8 @@
         return new Promise((resolve, reject) => {
             const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
             const host = window.location.hostname;
-            const port = '8084'; // 웹소켓 서버의 포트
 
-            const wsUrl = `${protocol}//${host}:${port}/chat`;
+            const wsUrl = `${protocol}//${host}/chat`;
 
             let socket = new SockJS(wsUrl, null, {
                 transports: ["websocket", "xhr-streaming", "xhr-polling"],

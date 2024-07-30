@@ -30,3 +30,6 @@ board:
   notice:
     board:
       name: notice
+
+cookie:
+  domain: localhost

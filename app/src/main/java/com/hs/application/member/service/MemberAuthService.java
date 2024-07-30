@@ -19,6 +19,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,6 +47,8 @@ public class MemberAuthService implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, String> redisTemplate;
     private final MemberJwtProperties memberJwtProperties;
+    @Value("${cookie.domain}")
+    private String cookieDomain;
 
     /**
      * 로그인
@@ -112,6 +115,8 @@ public class MemberAuthService implements AuthService {
 
         Cookie accessTokenCookie = new Cookie(MemberJwtProperties.ACCESS_TOKEN_NAME, accessToken);
         accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setSecure(true);
+        accessTokenCookie.setDomain(cookieDomain);
         accessTokenCookie.setMaxAge((int) memberJwtProperties.getAccessTokenExpiredTime());
         accessTokenCookie.setPath("/");
 
@@ -141,6 +146,8 @@ public class MemberAuthService implements AuthService {
 
         Cookie refreshTokenCookie = new Cookie(MemberJwtProperties.REFRESH_TOKEN_NAME, refreshToken);
         refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true);
+        refreshTokenCookie.setDomain(cookieDomain);
         refreshTokenCookie.setMaxAge((int) memberJwtProperties.getRefreshTokenExpiredTime());
         refreshTokenCookie.setPath("/");
         HttpServletUtil.getHttpServletResponse().addCookie(refreshTokenCookie);
@@ -158,15 +165,19 @@ public class MemberAuthService implements AuthService {
 
         Cookie accessTokenCookie = new Cookie(MemberJwtProperties.ACCESS_TOKEN_NAME, null);
         // 토큰 생성시의 쿠키속성과 속성들이 일치해야 적용된다
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setSecure(true);
+        accessTokenCookie.setDomain(cookieDomain);
         accessTokenCookie.setMaxAge(0);
         accessTokenCookie.setPath("/");
-        accessTokenCookie.setHttpOnly(true);
         response.addCookie(accessTokenCookie);
 
         Cookie refreshTokenCookie = new Cookie(MemberJwtProperties.REFRESH_TOKEN_NAME, null);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true);
+        refreshTokenCookie.setDomain(cookieDomain);
         refreshTokenCookie.setMaxAge(0);
         refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setHttpOnly(true);
         response.addCookie(refreshTokenCookie);
 
     }

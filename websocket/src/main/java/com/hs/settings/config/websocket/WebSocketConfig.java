@@ -1,7 +1,6 @@
 package com.hs.settings.config.websocket;
 
 import com.hs.settings.utils.StompHandler;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -21,7 +20,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/chat")
-                .setAllowedOrigins("http://localhost:8083", "https://localhost:8083")
+                .setAllowedOrigins(
+                        "http://spring-chat:8083", "https://spring-chat:8083"
+                        , "http://spring-chat", "https://spring-chat"
+                        , "http://localhost:8083", "https://localhost:8083"
+                        , "http://localhost", "https://localhost"
+                )
                 .withSockJS();
     }
 

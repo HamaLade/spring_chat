@@ -28,3 +28,6 @@ board:
 
 kafka:
   enabled: false
+
+cookie:
+  domain: localhost
