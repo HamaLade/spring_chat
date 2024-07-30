@@ -19,7 +19,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/chat")
+        registry.addEndpoint("/socket")
                 .setAllowedOrigins(
                         "http://www.spring-chat:8083", "https://www.spring-chat:8083"
                         , "http://www.spring-chat", "https://www.spring-chat"

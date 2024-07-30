@@ -210,17 +210,17 @@
             const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
             const host = window.location.hostname;
 
-            const wsUrl = `${protocol}//${host}/chat`;
+            const wsUrl = `${protocol}//${host}/socket`;
 
             let socket = new SockJS(wsUrl, null, {
                 transports: ["websocket", "xhr-streaming", "xhr-polling"],
                 withCredentials: true
             });
             let connectionTimeout = setTimeout(() => {
-                alert('서버와 연결할 수 없습니다. 다시 시도해주세요.');
+                alert('채팅 서버와 연결할 수 없습니다. 다시 시도해주세요.');
                 socket.close();
                 reject('Connection timeout');
-            }, 2000);
+            }, 3000);
             stompClient = Stomp.over(socket);
             stompClient.connect({
                 Authorization: [[${roomDetailInfo.authCode}]]
