@@ -11,10 +11,10 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(
-                        "http://spring-chat:8083", "https://spring-chat:8083"
-                        , "http://spring-chat", "https://spring-chat"
-                        , "http://localhost:8083", "https://localhost:8083"
+                        "http://localhost:8083", "https://localhost:8083"
                         , "http://localhost", "https://localhost"
+                        , "http://*.spring-chat:8083", "https://*.spring-chat:8083"
+                        , "http://*.spring-chat", "https://*.spring-chat"
                 )
                 .allowCredentials(true);
     }
