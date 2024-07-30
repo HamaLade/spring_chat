@@ -121,6 +121,7 @@
         const textContent = simplemde.value();
 
         fetch('/boards/notice/write', {
+            credentials: "include",
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

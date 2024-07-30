@@ -113,6 +113,7 @@
         }
 
         fetch('/members/signup', {
+            credentials: "include",
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

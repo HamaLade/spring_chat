@@ -110,6 +110,7 @@
         const isPrivate = document.getElementById('isPrivate').value === 'true';
 
         fetch('/chat/rooms/create', {
+            credentials: "include",
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

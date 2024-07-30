@@ -246,6 +246,7 @@
 
     function exitRoom() {
         fetch('/chat/rooms/exit/' + roomId, {
+            credentials: "include",
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -321,6 +322,7 @@
 
     function logout() {
         fetch('/members/logout', {
+            credentials: "include",
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -353,6 +355,7 @@
         // 여기에 사용자 검색 API 호출 로직 추가
         // 예시:
         fetch('/members/search', {
+            credentials: "include",
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -375,6 +378,7 @@
     function inviteUser(inviteMemberNickname) {
 
         fetch(`/chat/rooms/invite/${roomId}`, {
+            credentials: "include",
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
