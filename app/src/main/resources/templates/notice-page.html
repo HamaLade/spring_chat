@@ -2,13 +2,25 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>공지사항</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5a623;
+            --background-color: #f8f9fa;
+            --text-color: #333333;
+            --hover-color: #3a7bd5;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
+            background-color: var(--background-color);
+            color: var(--text-color);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
@@ -16,51 +28,60 @@
 
         .top-bar {
             height: 80px;
-            background-color: #757575;
+            background-color: var(--primary-color);
             color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            z-index: 1;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 10;
         }
 
-        .top-bar a, .top-bar button {
-            background-color: #ffffff;
-            color: #333333;
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .nav-buttons a, .nav-buttons button {
+            background-color: transparent;
+            color: #ffffff;
             cursor: pointer;
             font-size: 16px;
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             transition: background-color 0.3s ease;
             text-decoration: none;
             margin-left: 10px;
         }
 
-        .top-bar a:hover, .top-bar button:hover {
-            background-color: #eeeeee;
+        .nav-buttons a:hover, .nav-buttons button:hover {
+            background-color: var(--hover-color);
         }
 
         .content-wrapper {
             display: flex;
             flex: 1;
-            overflow: hidden;
+            padding: 20px;
         }
 
         .main-content {
             width: 100%;
-            background-color: #f5f5f5;
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            overflow-y: auto;
         }
 
         .main-content h2 {
-            color: #333333;
-            font-size: 24px;
-            margin-bottom: 16px;
+            color: var(--primary-color);
+            font-size: 28px;
+            margin-bottom: 24px;
             text-align: center;
         }
 
@@ -72,10 +93,22 @@
         .notice-item {
             background-color: #ffffff;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
             margin-bottom: 16px;
             padding: 16px;
             cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .notice-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .notice-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-color);
         }
 
         .pagination {
@@ -86,27 +119,50 @@
         }
 
         .pagination a {
-            color: #333333;
+            color: var(--text-color);
             padding: 8px 16px;
             text-decoration: none;
-            transition: background-color .3s;
+            transition: background-color 0.3s ease;
             border: 1px solid #ddd;
             margin: 0 4px;
+            border-radius: 4px;
         }
 
         .pagination a.active {
-            background-color: #757575;
+            background-color: var(--primary-color);
             color: white;
-            border: 1px solid #757575;
+            border: 1px solid var(--primary-color);
         }
 
-        .pagination a:hover:not(.active) {background-color: #ddd;}
+        .pagination a:hover:not(.active) {
+            background-color: #e9ecef;
+        }
+
+        .pagination a.disabled {
+            color: #6c757d;
+            pointer-events: none;
+            cursor: default;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+            }
+
+            .notice-item {
+                padding: 12px;
+            }
+
+            .pagination a {
+                padding: 6px 12px;
+            }
+        }
     </style>
 </head>
 <body>
 <div class="top-bar">
-    <div></div>
-    <div>
+    <a href="/" class="logo">Spring-Chat</a>
+    <div class="nav-buttons">
         <div sec:authorize="isAuthenticated()">
             <a id="logout" href="#" onclick="logout()">로그아웃</a>
             <a id="withdraw" th:href="@{/withdraw}">회원탈퇴</a>
@@ -122,7 +178,7 @@
         <h2>공지사항</h2>
         <ul class="notice-list">
             <li th:each="post : ${noticePage.content}" class="notice-item" th:onclick="'location.href=\'/boards/post/' + ${post.id} + '\''">
-                <span th:text="${post.id + '. ' + post.title}"></span>
+                <span class="notice-title" th:text="${post.title}"></span>
             </li>
         </ul>
         <div class="pagination" th:if="${noticePage.totalPages > 0}">
