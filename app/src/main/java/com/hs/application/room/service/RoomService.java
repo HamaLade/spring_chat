@@ -170,7 +170,8 @@ public class RoomService {
                 member.getNickname(),
                 room.getIsPrivate(),
                 participant,
-                recentMessages
+                recentMessages,
+                recentMessages.isEmpty() ? null : chatList.get(0).getCreateDate()
         );
         chatRoomDetailInfo.setAuthCode(refreshTokenCookie.getValue());
         return chatRoomDetailInfo;

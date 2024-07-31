@@ -229,6 +229,32 @@ public class MemberAuthService implements AuthService {
     }
 
     /**
+     * 비밀번호 변경
+     * @param nowPassword 현재 비밀번호
+     * @param newPassword 새 비밀번호
+     * @throws AuthorizationFailedException 로그인이 필요한 경우
+     * @throws PasswordNotMatchedException 현재 비밀번호가 일치하지 않거나 현재 비밀번호와 새 비밀번호가 같은 경우
+     */
+    @Transactional
+    public void changePassword(String nowPassword, String newPassword) {
+        UserDetails userDetails = authorization();
+        if (userDetails == null) {
+            throw new AuthorizationFailedException("로그인이 필요합니다.");
+        }
+        Member member = memberRepository.findById(Long.valueOf(userDetails.getUsername()))
+                .orElseThrow(MemberNotFoundException::new);
+        if (!passwordEncoder.matches(nowPassword, member.getPassword())) {
+            throw new PasswordNotMatchedException("현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        if (nowPassword.equals(newPassword)) {
+            throw new PasswordNotMatchedException("현재 비밀번호와 새 비밀번호가 같습니다.");
+        }
+
+        member.changePassword(passwordEncoder.encode(newPassword));
+    }
+
+    /**
      * 인증
      * accessToken, refreshToken 중 하나라도 유효하면 인증 성공
      *

@@ -39,6 +39,7 @@ public class HomeController {
             model.addAttribute("joinedChatRooms", joinedChatRooms);
         }
 
+        model.addAttribute("passwordChangePage", ApiPaths.MEMBER_PASSWORD_CHANGE);
         model.addAttribute("loginPage", ApiPaths.MEMBER_LOGIN);
         model.addAttribute("signupPage", ApiPaths.MEMBER_SIGNUP);
         return "home";
@@ -64,6 +65,11 @@ public class HomeController {
     @GetMapping(ApiPaths.MEMBER_SIGNUP)
     public String signup() {
         return "signup";
+    }
+
+    @GetMapping(ApiPaths.MEMBER_PASSWORD_CHANGE)
+    public String passwordChange() {
+        return "password-change";
     }
 
     /**

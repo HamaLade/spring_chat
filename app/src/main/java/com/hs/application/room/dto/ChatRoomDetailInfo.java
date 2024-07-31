@@ -20,9 +20,8 @@ public class ChatRoomDetailInfo {
     private Boolean isPrivate;
     private String authCode;
     private List<Participant> participants;
-    // 최근 메세지들
     private List<ChatMessageInfo> recentMessages;
-
+    private LocalDateTime lastMessageAt;
 
     @Getter
     @Setter
@@ -64,7 +63,8 @@ public class ChatRoomDetailInfo {
             String memberNickname,
             Boolean isPrivate,
             List<Participant> participantMap,
-            List<ChatMessageInfo> recentMessages
+            List<ChatMessageInfo> recentMessages,
+            LocalDateTime lastMessageAt
     ) {
         this.chatRoomId = chatRoomId;
         this.chatRoomName = chatRoomName;
@@ -73,6 +73,7 @@ public class ChatRoomDetailInfo {
         this.isPrivate = isPrivate;
         this.participants = participantMap;
         this.recentMessages = recentMessages;
+        this.lastMessageAt = lastMessageAt;
     }
 
 }

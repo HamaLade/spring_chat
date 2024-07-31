@@ -8,6 +8,7 @@ import com.hs.presentation.ResponseMessage;
 import com.hs.presentation.auth.dto.MemberLoginRequestDto;
 import com.hs.presentation.auth.dto.MemberSearchRequestDto;
 import com.hs.presentation.auth.dto.MemberSignUpRequestDto;
+import com.hs.presentation.auth.dto.PasswordChangeRequestDto;
 import com.hs.presentation.error.Errors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -98,6 +96,23 @@ public class MemberController {
 
         memberAuthService.withdraw();
         memberAuthService.logout();
+        return ResponseEntity.ok(new ResponseMessage("ok", null));
+    }
+
+    /**
+     * 비밀번호 변경
+     *
+     * @param passwordChangeRequestDto 비밀번호 변경 요청 데이터, currentPassword, newPassword 필드를 가지고 있음
+     * @return 비밀번호 변경 성공 시 ok
+     */
+    @ResponseBody
+    @PatchMapping(ApiPaths.MEMBER_PASSWORD_CHANGE)
+    public ResponseEntity<ResponseMessage> changePassword(@RequestBody @Validated PasswordChangeRequestDto passwordChangeRequestDto) {
+
+        memberAuthService.changePassword(
+                passwordChangeRequestDto.getCurrentPassword(),
+                passwordChangeRequestDto.getNewPassword()
+        );
         return ResponseEntity.ok(new ResponseMessage("ok", null));
     }
 

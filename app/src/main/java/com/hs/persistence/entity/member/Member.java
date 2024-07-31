@@ -65,4 +65,9 @@ public class Member {
         this.password = password;
         this.role = MemberRole.ROLE_USER;
     }
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
+
 }

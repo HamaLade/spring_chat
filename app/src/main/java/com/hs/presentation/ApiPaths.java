@@ -13,6 +13,7 @@ public class ApiPaths {
     public static final String MEMBER_LOGIN = MEMBER_ROOT_PATH + "/login";
     public static final String MEMBER_SIGNUP = MEMBER_ROOT_PATH + "/signup";
     public static final String MEMBER_LOGOUT = MEMBER_ROOT_PATH + "/logout";
+    public static final String MEMBER_PASSWORD_CHANGE = MEMBER_ROOT_PATH + "/password/change";
     public static final String MEMBER_WITHDRAW = MEMBER_ROOT_PATH + "/withdraw";
     public static final String MEMBER_TOKEN_AUTHORIZE = MEMBER_ROOT_PATH + "/token/authorize";
     public static final String MEMBER_SEARCH = MEMBER_ROOT_PATH + "/search";

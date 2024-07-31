@@ -54,8 +54,8 @@ public class SecurityConfig {
                         (authorizeRequest) -> // 로그인 빼고 전부 접근 불가
                                 authorizeRequest
                                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
-                                        .requestMatchers("/", "/favicon.ico", "/members/login", "/members/signup", "members/logout", "/boards/**").permitAll()
-                                        .requestMatchers("/chat/**").hasAnyRole("USER", "ADMIN")
+                                        .requestMatchers("/", "/favicon.ico", "/members/login", "/members/signup", "members/logout", "/boards/notice", "/boards/notice/page", "/boards/post/*").permitAll()
+                                        .requestMatchers("/boards/notice/edit", "/boards/notice/write").hasRole("ADMIN")
                                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new UserAuthenticationFilter(memberAuthService), UsernamePasswordAuthenticationFilter.class)
