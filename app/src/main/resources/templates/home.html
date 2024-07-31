@@ -2,121 +2,132 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>메인 페이지</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring-Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5a623;
+            --background-color: #f8f9fa;
+            --text-color: #333333;
+            --hover-color: #3a7bd5;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
+            background-color: var(--background-color);
+            color: var(--text-color);
             display: flex;
             flex-direction: column;
-            min-height: 100vh; /* 최소 화면 높이 */
+            min-height: 100vh;
         }
 
         .top-bar {
             height: 80px;
-            background-color: #757575; /* 회색 배경 */
+            background-color: var(--primary-color);
             color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            z-index: 1; /* 상단 바는 위로 띄우기 */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 10;
         }
 
-        .top-bar a, .top-bar button {
-            background-color: #ffffff; /* 흰색 배경 */
-            color: #333333; /* 검정색 텍스트 */
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .nav-buttons a, .nav-buttons button {
+            background-color: transparent;
+            color: #ffffff;
             cursor: pointer;
             font-size: 16px;
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             transition: background-color 0.3s ease;
-            text-decoration: none; /* 링크와 동일한 스타일을 적용 */
-            margin-left: 10px; /* 각 버튼 간격을 위한 마진 */
+            text-decoration: none;
+            margin-left: 10px;
         }
 
-        .top-bar a:hover, .top-bar button:hover {
-            background-color: #eeeeee; /* hover 시 연한 회색 */
-        }
-
-        .top-bar div {
-            display: flex;
-            align-items: center;
+        .nav-buttons a:hover, .nav-buttons button:hover {
+            background-color: var(--hover-color);
         }
 
         .content-wrapper {
             display: flex;
             flex: 1;
-            overflow: hidden; /* 내부 컨텐츠가 넘치면 숨김 */
+            overflow: hidden;
+        }
+
+        .chat-container .feature-card {
+            width: 100%;
+            margin: 0 0 20px 0;
+        }
+
+        .chat-container .feature-icon {
+            font-size: 36px;
+        }
+
+        .chat-container .feature-title {
+            font-size: 18px;
+        }
+
+        .chat-container .feature-description {
+            font-size: 14px;
         }
 
         .chat-container {
-            width: 20%;
+            width: 25%;
             background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            overflow-y: auto; /* 스크롤바 */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            overflow-y: auto;
+            padding: 20px;
         }
 
         .main-content {
-            width: 80%;
-            background-color: #f5f5f5; /* 메인 콘텐츠 배경 */
-            padding: 20px;
-            overflow-y: auto; /* 스크롤바 */
+            width: 75%;
+            background-color: var(--background-color);
+            padding: 40px;
+            overflow-y: auto;
         }
 
-        .main-content h2 {
-            color: #333333;
-            font-size: 24px;
-            margin-bottom: 16px;
-        }
-
-        .main-content ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .main-content li {
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 16px;
-            padding: 16px;
-        }
-
-        a {
-            text-decoration: none; /* 링크의 밑줄 제거 */
-        }
-
-        #notice-page {
-            display: block;
-            width: 100%;
-            text-align: right;
-            color: #333333;
-            font-size: 16px;
-            margin-top: 10px;
+        h2 {
+            color: var(--primary-color);
+            font-size: 28px;
+            margin-bottom: 24px;
+            text-align: center;
         }
 
         .chat-search {
-            text-align: center;
-            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
         }
 
-        .chat-search-btn {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 15px;
+        .chat-search-btn, .chat-create-btn {
+            background-color: var(--secondary-color);
+            color: #ffffff;
+            padding: 12px 20px;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 25px;
             display: inline-block;
+            font-weight: bold;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .chat-search-btn:hover {
-            background-color: #45a049;
+        .chat-search-btn:hover, .chat-create-btn:hover {
+            background-color: #e09600;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         #chatRoomList {
@@ -125,66 +136,154 @@
         }
 
         #chatRoomList li {
-            padding: 10px;
+            padding: 15px;
             border-bottom: 1px solid #eee;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
         #chatRoomList li:hover {
-            background-color: #f5f5f5;
-        }
-
-        .chat-search {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 15px;
-        }
-
-        .chat-search-btn, .chat-create-btn {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 15px;
-            text-decoration: none;
-            border-radius: 5px;
-            display: inline-block;
-        }
-
-        .chat-search-btn:hover, .chat-create-btn:hover {
-            background-color: #45a049;
+            background-color: #f0f4f8;
         }
 
         .admin-controls {
             text-align: right;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .admin-btn {
-            background-color: #757575;
+            background-color: var(--primary-color);
             color: #ffffff;
-            padding: 10px 20px;
+            padding: 12px 24px;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 25px;
             font-size: 16px;
-            transition: background-color 0.3s ease;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
         .admin-btn:hover {
-            background-color: #5a5a5a;
+            background-color: var(--hover-color);
+            transform: translateY(-2px);
         }
 
+        .notice-page-btn {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .notice-page-btn:hover {
+            background-color: var(--hover-color);
+            transform: translateY(-2px);
+        }
+
+        .notice-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .notice-item {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .notice-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .notice-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .notice-preview {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .notice-date {
+            color: #999;
+            font-size: 12px;
+            text-align: right;
+        }
+
+        .feature-section {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 10px;
+            width: calc(33% - 20px);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .feature-description {
+            font-size: 14px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+
+            .chat-container, .main-content {
+                width: 100%;
+            }
+
+            .feature-card {
+                width: calc(50% - 20px);
+            }
+        }
     </style>
 </head>
 <body>
 <div class="top-bar">
-    <div></div>
-    <div>
-        <!-- 인증 상태에서는 로그아웃, 회원탈퇴 버튼만 -->
+    <a href="/" class="logo">Spring-Chat</a>
+    <div class="nav-buttons">
         <div sec:authorize="isAuthenticated()">
-            <!-- 로그아웃 버튼 누를 시 logout post api 요청 -->
+            <a id="passwordChange" th:href="@{${passwordChangePage}}">비밀번호 변경</a>
             <a id="logout" href="#" onclick="logout()">로그아웃</a>
             <a id="withdraw" href="#" onclick="withdraw()">회원탈퇴</a>
         </div>
-        <!-- 비인증 상태에서는 로그인, 회원가입 버튼만 -->
         <div sec:authorize="isAnonymous()">
             <a id="login" th:href="@{${loginPage}}">로그인</a>
             <a id="signup" th:href="@{${signupPage}}">회원가입</a>
@@ -193,61 +292,76 @@
 </div>
 <div class="content-wrapper">
     <div class="chat-container">
-        <h2 th:align="center">채팅방</h2>
+        <div class="feature-section">
+            <div class="feature-card">
+                <i class="fas fa-comments feature-icon"></i>
+                <h3 class="feature-title">실시간 채팅</h3>
+                <p class="feature-description">다양한 주제로 실시간 대화를 나눠보세요. 새로운 사람들과 소통하고 아이디어를 교환하세요.</p>
+            </div>
+        </div>
         <div sec:authorize="isAuthenticated()">
-            <!-- 채팅방 탐색 버튼 -->
             <div class="chat-search">
                 <a href="/chat/rooms" class="chat-search-btn">채팅방 찾기</a>
                 <a href="/chat/rooms/create" class="chat-create-btn">방 만들기</a>
             </div>
-            <!-- 참가 중인 채팅방 목록 -->
             <ul id="chatRoomList">
-                <!-- joinedChatRooms.chatRoomName을 나열 -->
                 <li th:each="chatRoom : ${joinedChatRooms}" th:text="${chatRoom.chatRoomName}"
                     th:onclick="'location.href=\'/chat/rooms/join/' + ${chatRoom.chatRoomId} + '\';'">
-
                 </li>
             </ul>
         </div>
         <div sec:authorize="isAnonymous()">
-            <p>회원만 이용 가능합니다.</p>
+            <p>회원만 이용 가능합니다. (개인정보를 요구하지 않습니다)</p>
         </div>
     </div>
     <div class="main-content">
-        <h2 th:align="center">공지</h2>
+        <h2>최신 공지사항</h2>
         <div sec:authorize="hasRole('ROLE_ADMIN')" class="admin-controls">
             <a href="/boards/notice/write" class="admin-btn">공지 작성</a>
         </div>
-        <ul>
+        <div>
+            <a href="/boards/notice/page" class="notice-page-btn">공지사항 더보기</a>
+        </div>
+        <ul class="notice-list">
+            <!-- 공지사항 목록은 JavaScript로 동적 생성됩니다 -->
         </ul>
     </div>
 </div>
 <script>
-    // 페이지 로드 시 실행
     document.addEventListener('DOMContentLoaded', function () {
-        // /boards/notice post api 요청
         fetch('/boards/notice', {
+            credentials: "include",
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             }
-
         })
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (json) {
-                json.data.content.forEach(function (notice) {
-                    var li = document.createElement('li');
-                    li.textContent = notice.id + '. ' + notice.title;
-                    li.addEventListener('click', function () {
-                        location.href = '/boards/post/' + notice.id;
+            .then(response => response.json())
+            .then(json => {
+                console.log('Received JSON:', json); // 받은 JSON을 콘솔에 출력
+                const noticeList = document.querySelector('.notice-list');
+                if (json.data && Array.isArray(json.data.content)) {
+                    json.data.content.forEach(notice => {
+                        const li = document.createElement('li');
+                        li.className = 'notice-item';
+                        li.innerHTML = `
+                    <div class="notice-title">${notice.title}</div>
+                    <div class="notice-preview">${notice.textContent.substring(0, 100)}...</div>
+                `;
+                        li.addEventListener('click', () => {
+                            location.href = '/boards/post/' + notice.id;
+                        });
+                        noticeList.appendChild(li);
                     });
-                    document.querySelector('.main-content ul').appendChild(li);
-                });
+                } else {
+                    console.error('Unexpected JSON structure:', json);
+                    noticeList.innerHTML = '<li>공지사항을 불러오는 데 실패했습니다.</li>';
+                }
             })
-            .catch(function (error) {
+            .catch(error => {
                 console.error('Notice board fetch failed', error);
+                const noticeList = document.querySelector('.notice-list');
+                noticeList.innerHTML = '<li>공지사항을 불러오는 데 실패했습니다.</li>';
             });
     });
 
@@ -258,32 +372,34 @@
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(function (response) {
+        }).then(response => {
             if (response.ok) {
                 location.href = '/';
             }
-        }).catch(function (error) {
+        }).catch(error => {
             console.log('Logout failed', error);
         });
     }
 
     function withdraw() {
-        fetch('/members/withdraw', {
-            credentials: "include",
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(function (response) {
-            console.log(response);
-            if (response.ok) {
-                location.href = '/';
-            }
-        }).catch(function (error) {
-            console.log('Withdraw failed', error);
-        });
+        if (confirm('회원 탈퇴하시겠습니까? 데이터는 완전히 제거되며 복구되지 않습니다.')) {
+            fetch('/members/withdraw', {
+                credentials: "include",
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    alert('회원 탈퇴가 완료되었습니다.');
+                    location.href = '/';
+                }
+            }).catch(error => {
+                console.log('Withdraw failed', error);
+                alert('회원 탈퇴 중 오류가 발생했습니다. 다시 시도해 주세요.');
+            });
+        }
     }
-
 </script>
 </body>
 </html>

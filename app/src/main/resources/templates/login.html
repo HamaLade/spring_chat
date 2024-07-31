@@ -2,92 +2,190 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 - Spring-Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5a623;
+            --background-color: #f8f9fa;
+            --text-color: #333333;
+            --error-color: #e74c3c;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            height: 80px;
+            background-color: var(--primary-color);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .nav-buttons a, .nav-buttons button {
+            background-color: transparent;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        .nav-buttons a:hover, .nav-buttons button:hover {
+            background-color: var(--hover-color);
+        }
+
+        .content-wrapper {
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            padding: 20px;
         }
 
         .login-container {
-            width: 400px;
-            padding: 40px;
             background-color: #ffffff;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
         }
 
-        .login-container h2 {
+        h1 {
+            color: var(--primary-color);
+            font-size: 28px;
+            margin-bottom: 24px;
             text-align: center;
-            margin-bottom: 20px;
-            color: #333333;
         }
 
-        .login-form {
+        form {
             display: flex;
             flex-direction: column;
         }
 
-        .login-form input[type="text"],
-        .login-form input[type="password"] {
-            margin-bottom: 16px;
-            padding: 10px;
-            border: 1px solid #cccccc;
-            border-radius: 4px;
-            font-size: 16px;
+        .input-group {
+            margin-bottom: 20px;
         }
 
-        .login-form button {
-            background-color: #3f51b5;
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        button {
+            background-color: var(--primary-color);
             color: #ffffff;
             border: none;
             border-radius: 4px;
             padding: 12px;
-            cursor: pointer;
             font-size: 16px;
+            cursor: pointer;
             transition: background-color 0.3s ease;
         }
 
-        .login-form button:hover {
-            background-color: #303f9f;
+        button:hover {
+            background-color: #3a7bd5;
         }
 
         .error-message {
-            color: red;
+            color: var(--error-color);
+            font-size: 14px;
             margin-top: 10px;
             text-align: center;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .signup-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-<div class="login-container">
-    <h2>로그인</h2>
-    <form class="login-form">
-        <label for="loginId"></label>
-        <input type="text" id="loginId" name="loginId" placeholder="아이디" required>
-        <label for="password"></label>
-        <input type="password" id="password" name="password" placeholder="비밀번호" required>
-        <button type="submit">로그인</button>
-        <div id="error-message" class="error-message"></div>
-    </form>
+<div class="top-bar">
+    <a href="/" class="logo">Spring-Chat</a>
+    <!-- 여기에 필요한 경우 네비게이션 링크를 추가할 수 있습니다 -->
 </div>
-</body>
-<script>
-    document.querySelector('.login-form').addEventListener('submit', function (event) {
-        event.preventDefault();
-        let loginId = document.getElementById('loginId').value;
-        let password = document.getElementById('password').value;
+<div class="content-wrapper">
+    <div class="login-container">
+        <h1>로그인</h1>
+        <form id="login-form">
+            <div class="input-group">
+                <label for="username">아이디</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">비밀번호</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">로그인</button>
+        </form>
+        <div id="error-message" class="error-message"></div>
+        <div class="signup-link">
+            계정이 없으신가요? <a id="signup" th:href="@{/members/signup}">회원가입</a>
+        </div>
+    </div>
+</div>
 
-        if (!loginId || !password) {
-            document.getElementById('error-message').innerText = '아이디와 비밀번호를 입력해주세요.';
-            return;
-        }
+<script>
+    document.getElementById('login-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const loginId = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
 
         fetch('/members/login', {
             credentials: "include",
@@ -109,6 +207,6 @@
             location.href = '/';
         });
     });
-
 </script>
+</body>
 </html>
