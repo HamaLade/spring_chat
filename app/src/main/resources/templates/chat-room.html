@@ -335,7 +335,7 @@
             const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
             const host = window.location.hostname;
 
-            const wsUrl = `${protocol}//${host}:8084/socket`;
+            const wsUrl = `${protocol}//${host}/socket`;
 
             let socket = new SockJS(wsUrl, null, {
                 transports: ["websocket", "xhr-streaming", "xhr-polling"],
