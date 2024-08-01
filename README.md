@@ -16,6 +16,9 @@
 - Documentation: Spring REST Docs
 - API Communication: WebClient
 
+## API 문서
+- [웹 페이지 API](https://hamalade.github.io/spring_chat/)
+
 ## 프로젝트 구조
 
 ### 웹 어플리케이션 구조
@@ -90,6 +93,3 @@ websocket/
 ## 추가 계획
 - 채팅방 내 1:1 상호작용 기능 추가 (귓말, 친구 추가 등)
 - 리소스 저장 기능 구현 (비용 효율적인 방식 고려)
-
-## API 문서
-- [웹 페이지 API](https://hamalade.github.io/spring_chat/)
