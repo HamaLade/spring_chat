@@ -10,7 +10,7 @@ env:
   AWS_REGION: ap-northeast-2  # AWS 리전
   ECR_REPOSITORY_APP: spring-chat-app-repository  # app 모듈용 ECR 리포지토리 이름
   ECR_REPOSITORY_WEBSOCKET: spring-chat-websocket-repository  # websocket 모듈용 ECR 리포지토리 이름
-  ECS_SERVICE: app-websocket-kafka-redis-service  # ECS 서비스 이름
+  ECS_SERVICE: spring-chat-service  # ECS 서비스 이름
   ECS_CLUSTER: spring-chat-cluster  # ECS 클러스터 이름
 
 jobs:
