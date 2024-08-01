@@ -75,7 +75,6 @@ insert into board_post (board_id, writer_id, title, text_content, has_file) valu
 insert into board_post (board_id, writer_id, title, text_content, has_file) values (1, null, 'notice title 51', 'notice content 51', 0);
 
 
-
 insert into room (room_name, is_private) values ('room01', 0);
 insert into room (room_name, is_private) values ('room02', 0);
 insert into room (room_name, is_private) values ('room03', 0);
