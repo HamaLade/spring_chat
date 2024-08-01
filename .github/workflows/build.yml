@@ -113,8 +113,10 @@ jobs:
           docker buildx build --platform linux/amd64 -t $ECR_REGISTRY/$ECR_REPOSITORY_WEBSOCKET:latest --push .
 
   deploy_to_ecs:
-    needs: check_changes
-    if: ${{ needs.check_changes.outputs.app == 'true' || needs.check_changes.outputs.websocket == 'true' }}
+    needs: [ build_and_push_app, build_and_push_websocket ]
+    if: |
+      needs.build_and_push_app.result == 'success' ||
+      needs.build_and_push_websocket.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS credentials
