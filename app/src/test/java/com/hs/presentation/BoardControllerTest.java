@@ -2,7 +2,9 @@ package com.hs.presentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hs.application.board.service.BoardService;
+import com.hs.persistence.entity.board.BoardPost;
 import com.hs.persistence.repository.board.BoardPostRepository;
+import com.hs.presentation.board.dto.NoticePostWriteRequestDto;
 import com.hs.utils.FieldDescriptorUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,8 +27,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -98,6 +100,92 @@ public class BoardControllerTest {
                         )
                 ));
 
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("공지사항 작성")
+    void writeNoticePost() throws Exception {
+        NoticePostWriteRequestDto noticePostWriteRequestDto = new NoticePostWriteRequestDto(
+                "제목",
+                "내용"
+        );
+
+        mockMvc.perform(
+                post(ApiPaths.WRITE_NOTICE_POST)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(noticePostWriteRequestDto))
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("write-notice-post",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
+                                fieldWithPath("textContent").type(JsonFieldType.STRING).description("게시글 내용")
+                        ),
+                        responseFields(
+                                FieldDescriptorUtils.reponseMessageFieldDescriptor("공지사항 작성 결과")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("공지사항 작성: 권한없음")
+    void writeNoticePostNoPermission() throws Exception {
+        NoticePostWriteRequestDto noticePostWriteRequestDto = new NoticePostWriteRequestDto(
+                "제목",
+                "내용"
+        );
+
+        mockMvc.perform(
+                        post(ApiPaths.WRITE_NOTICE_POST)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(noticePostWriteRequestDto))
+                )
+                .andExpect(status().isForbidden())
+                .andDo(print())
+                .andDo(document("write-notice-post-no-permission",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
+                                fieldWithPath("textContent").type(JsonFieldType.STRING).description("게시글 내용")
+                        )
+                ));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("공지사항 수정")
+    void editNoticePost() throws Exception {
+
+        String title = "notice title 01";
+        BoardPost boardPost = boardPostRepository.findByTitle(title).orElseThrow();
+        NoticePostWriteRequestDto noticePostWriteRequestDto = new NoticePostWriteRequestDto(
+                title,
+                "내용 변경"
+        );
+
+        mockMvc.perform(
+                post(ApiPaths.EDIT_NOTICE_POST, boardPost.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(noticePostWriteRequestDto))
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("edit-notice-post",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
+                                fieldWithPath("textContent").type(JsonFieldType.STRING).description("게시글 내용")
+                        ),
+                        responseFields(
+                                FieldDescriptorUtils.reponseMessageFieldDescriptor("공지사항 수정 결과")
+                        )
+                ));
     }
 
 }

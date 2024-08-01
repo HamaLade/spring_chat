@@ -6,12 +6,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
+
 
 public interface BoardPostRepository extends JpaRepository<BoardPost, Long> {
 
     // 공지사항 게시글 조회
     @Query("select bp from BoardPost bp where bp.boardId = (select b.id from Board b where b.boardName = :boardName)")
     Page<BoardPost> findAllByBoardName(String boardName, Pageable pageable);
+
+    Optional<BoardPost> findByTitle(String title);
 
 
 }

@@ -17,3 +17,4 @@ endif::[]
 == API
 
 === link:member.html[회원]
+=== link:notice-board.html[공지사항]

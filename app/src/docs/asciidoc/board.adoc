@@ -23,5 +23,32 @@ include::{snippets}/default-notice-board/response-fields.adoc[]
 === 공지사항 게시글 목록 화면 페이지
 Request
 include::{snippets}/notice-board-detail/http-request.adoc[]
+
+=== 공지사항 작성
+Request
+include::{snippets}/write-notice-post/http-request.adoc[]
 Response
-include::{snippets}/notice-board-detail/http-response.adoc[]
+include::{snippets}/write-notice-post/http-response.adoc[]
+RequestFields
+include::{snippets}/write-notice-post/request-fields.adoc[]
+ResponseFields
+include::{snippets}/write-notice-post/response-fields.adoc[]
+
+=== 공지사항 작성 권한 없음
+Request
+include::{snippets}/write-notice-post-no-permission/http-request.adoc[]
+Response
+include::{snippets}/write-notice-post-no-permission/http-response.adoc[]
+RequestFields
+include::{snippets}/write-notice-post-no-permission/request-fields.adoc[]
+
+=== 공지사항 수정
+Request
+include::{snippets}/edit-notice-post/http-request.adoc[]
+Response
+include::{snippets}/edit-notice-post/http-response.adoc[]
+RequestFields
+include::{snippets}/edit-notice-post/request-fields.adoc[]
+ResponseFields
+include::{snippets}/edit-notice-post/response-fields.adoc[]
+

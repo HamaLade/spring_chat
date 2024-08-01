@@ -10,6 +10,10 @@ import java.util.List;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
 
+/**
+ * response message field descriptor utils
+ * 응답 메시지(ResponseMessage) 필드 설명자 유틸
+ */
 public class FieldDescriptorUtils {
 
     public static FieldDescriptor[] reponseMessageFieldDescriptor(String dataDescription, FieldDescriptor... data) {

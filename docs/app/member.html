@@ -445,7 +445,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel0">
-<li><a href="#_main">main</a>
+<li><a href="../index.html">main</a>
 <ul class="sectlevel1">
 <li><a href="#_비_로그인_상태">1. 비 로그인 상태</a>
 <ul class="sectlevel2">
@@ -544,6 +544,9 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -584,7 +587,7 @@ Content-Length: 61
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">반환 데이터 없음</p></td>
 </tr>
 <tr>
@@ -674,6 +677,9 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -681,16 +687,16 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 226
+Content-Length: 237
 
 {
   "message" : "error",
   "data" : null,
   "error" : {
-    "message" : "회원가입에 실패했습니다.",
-    "code" : 1005,
+    "message" : "이미 사용중인 아이디입니다.",
+    "code" : 1003,
     "status" : 400,
-    "description" : "이미 존재하는 아이디입니다."
+    "description" : "로그인 아이디가 이미 존재합니다."
   }
 }</code></pre>
 </div>
@@ -719,7 +725,7 @@ Content-Length: 226
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">반환 데이터 없음</p></td>
 </tr>
 <tr>
@@ -809,6 +815,9 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -816,16 +825,16 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 226
+Content-Length: 227
 
 {
   "message" : "error",
   "data" : null,
   "error" : {
-    "message" : "회원가입에 실패했습니다.",
-    "code" : 1005,
+    "message" : "이미 사용중인 닉네임입니다.",
+    "code" : 1004,
     "status" : 400,
-    "description" : "이미 존재하는 닉네임입니다."
+    "description" : "닉네임이 이미 존재합니다."
   }
 }</code></pre>
 </div>
@@ -854,7 +863,7 @@ Content-Length: 226
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">반환 데이터 없음</p></td>
 </tr>
 <tr>
@@ -941,8 +950,11 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
-Set-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzE5ODU4NzAwLCJ1aWQiOiIxIiwiaWF0IjoxNzE5ODU4NDAwfQ.SSyHeYGElYBw3bg6G4xsZEnk_J07McU4vlgwpvo089I; Path=/; Max-Age=300; Expires=Mon, 01 Jul 2024 18:31:40 GMT; HttpOnly
-Set-Cookie: refreshToken=eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiIxIiwiZXhwIjoxNzE5ODY5MjAwLCJpYXQiOjE3MTk4NTg0MDB9.ylsJ2Wsls4gIQuPx5vIc5bJTrNExCEXrT6xVhqYI4c_ulk9xelX3EvxoZW-gnNLqRCcAS4c2OyvBCyNQuwUfyw; Path=/; Max-Age=10800; Expires=Mon, 01 Jul 2024 21:26:40 GMT; HttpOnly
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Set-Cookie: accessToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzIyNTM4NTQ1LCJ1aWQiOiIxIiwiaWF0IjoxNzIyNTM4MjQ1fQ.O0Ok7pShRw-GBLRUtJneCeVO0kLVsLXVQNJFGe31kNs; Path=/; Domain=localhost; Max-Age=300; Expires=Thu, 1 Aug 2024 18:55:45 GMT; Secure; HttpOnly; SameSite=None
+Set-Cookie: refreshToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3MjI1NDkwNDUsInVpZCI6IjEiLCJpYXQiOjE3MjI1MzgyNDV9.nXAUAqYFU0928ItveagUnE1kGgkB7UKrlVkqBb4gtgTDnuDB8v2pe9PQRZUESlsoGiSXLWADs5Z2U559jLCg5w; Path=/; Domain=localhost; Max-Age=10800; Expires=Thu, 1 Aug 2024 21:50:45 GMT; Secure; HttpOnly; SameSite=None
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -956,12 +968,12 @@ Content-Length: 594
   "message" : "ok",
   "data" : {
     "accessTokenInfo" : {
-      "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzE5ODU4NzAwLCJ1aWQiOiIxIiwiaWF0IjoxNzE5ODU4NDAwfQ.SSyHeYGElYBw3bg6G4xsZEnk_J07McU4vlgwpvo089I",
-      "expiredTime" : 1719858700
+      "token" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzIyNTM4NTQ1LCJ1aWQiOiIxIiwiaWF0IjoxNzIyNTM4MjQ1fQ.O0Ok7pShRw-GBLRUtJneCeVO0kLVsLXVQNJFGe31kNs",
+      "expiredTime" : 1722538545
     },
     "refreshTokenInfo" : {
-      "token" : "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiIxIiwiZXhwIjoxNzE5ODY5MjAwLCJpYXQiOjE3MTk4NTg0MDB9.ylsJ2Wsls4gIQuPx5vIc5bJTrNExCEXrT6xVhqYI4c_ulk9xelX3EvxoZW-gnNLqRCcAS4c2OyvBCyNQuwUfyw",
-      "expiredTime" : 1719869200
+      "token" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3MjI1NDkwNDUsInVpZCI6IjEiLCJpYXQiOjE3MjI1MzgyNDV9.nXAUAqYFU0928ItveagUnE1kGgkB7UKrlVkqBb4gtgTDnuDB8v2pe9PQRZUESlsoGiSXLWADs5Z2U559jLCg5w",
+      "expiredTime" : 1722549045
     }
   },
   "error" : null
@@ -1131,6 +1143,9 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -1138,16 +1153,16 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 230
+Content-Length: 219
 
 {
   "message" : "error",
   "data" : null,
   "error" : {
     "message" : "로그인에 실패했습니다.",
-    "code" : 1004,
+    "code" : 1005,
     "status" : 400,
-    "description" : "로그인 정보가 일치하지 않습니다."
+    "description" : "로그인에 실패하였습니다."
   }
 }</code></pre>
 </div>
@@ -1176,7 +1191,7 @@ Content-Length: 230
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">반환 데이터 없음</p></td>
 </tr>
 <tr>
@@ -1258,8 +1273,11 @@ Content-Type: application/x-www-form-urlencoded</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
-Set-Cookie: accessToken=; Path=/; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly
-Set-Cookie: refreshToken=; Path=/; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Set-Cookie: accessToken=; Path=/; Domain=localhost; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; Secure; HttpOnly; SameSite=None
+Set-Cookie: refreshToken=; Path=/; Domain=localhost; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; Secure; HttpOnly; SameSite=None
 Content-Type: text/plain;charset=UTF-8
 Content-Length: 6
 X-Content-Type-Options: nosniff
