@@ -189,7 +189,7 @@
                     alert('채팅방이 성공적으로 생성되었습니다.');
                     window.location.href = '/chat/rooms';
                 } else {
-                    alert('채팅방 생성에 실패했습니다: ' + data.error.message);
+                    alert('채팅방 생성에 실패했습니다: ' + data.error.description);
                 }
             })
             .catch(error => {
