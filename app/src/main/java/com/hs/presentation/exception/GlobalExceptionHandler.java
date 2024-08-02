@@ -25,7 +25,6 @@ public class GlobalExceptionHandler {
         Errors error = Errors.fromException(e);
         return ResponseMessage.errorResponseEntity(
                 Objects.requireNonNullElse(error, Errors.UNDEFINED_ERROR)
-                , e.getMessage()
         );
     }
 
@@ -52,7 +51,6 @@ public class GlobalExceptionHandler {
 
         return ResponseMessage.errorResponseEntity(
                 Errors.INVALID_INPUT_VALUE
-                , badRequestErrorInformation
         );
 
     }

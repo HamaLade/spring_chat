@@ -471,8 +471,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_로그아웃_성공">2.1.1. 로그아웃 성공</a></li>
 </ul>
 </li>
+<li><a href="#_회원_탈퇴">2.2. 회원 탈퇴</a>
+<ul class="sectlevel3">
+<li><a href="#_회원_탈퇴_성공">2.2.1. 회원 탈퇴 성공</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li><a href="#_예외_코드">3. 예외 코드</a></li>
 </ul>
 </li>
 </ul>
@@ -687,7 +693,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 237
+Content-Length: 220
 
 {
   "message" : "error",
@@ -696,7 +702,7 @@ Content-Length: 237
     "message" : "이미 사용중인 아이디입니다.",
     "code" : 1003,
     "status" : 400,
-    "description" : "로그인 아이디가 이미 존재합니다."
+    "description" : "이미 사용중인 아이디"
   }
 }</code></pre>
 </div>
@@ -825,7 +831,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 227
+Content-Length: 220
 
 {
   "message" : "error",
@@ -834,7 +840,7 @@ Content-Length: 227
     "message" : "이미 사용중인 닉네임입니다.",
     "code" : 1004,
     "status" : 400,
-    "description" : "닉네임이 이미 존재합니다."
+    "description" : "이미 사용중인 닉네임"
   }
 }</code></pre>
 </div>
@@ -953,8 +959,8 @@ Host: localhost:8080
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-Set-Cookie: accessToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzIyNTM4NTQ1LCJ1aWQiOiIxIiwiaWF0IjoxNzIyNTM4MjQ1fQ.O0Ok7pShRw-GBLRUtJneCeVO0kLVsLXVQNJFGe31kNs; Path=/; Domain=localhost; Max-Age=300; Expires=Thu, 1 Aug 2024 18:55:45 GMT; Secure; HttpOnly; SameSite=None
-Set-Cookie: refreshToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3MjI1NDkwNDUsInVpZCI6IjEiLCJpYXQiOjE3MjI1MzgyNDV9.nXAUAqYFU0928ItveagUnE1kGgkB7UKrlVkqBb4gtgTDnuDB8v2pe9PQRZUESlsoGiSXLWADs5Z2U559jLCg5w; Path=/; Domain=localhost; Max-Age=10800; Expires=Thu, 1 Aug 2024 21:50:45 GMT; Secure; HttpOnly; SameSite=None
+Set-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiIxIiwiZXhwIjoxNzIyNjM1NDI4LCJyb2xlIjoiUk9MRV9VU0VSIiwiaWF0IjoxNzIyNjM1MTI4fQ.ypBiFbaKTF3RpRah7h66yAf5imq_PBmKaB3zWh7Auf0; Path=/; Domain=localhost; Max-Age=300; Expires=Fri, 2 Aug 2024 21:50:28 GMT; Secure; HttpOnly; SameSite=None
+Set-Cookie: refreshToken=eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjI2NDU5MjgsInVpZCI6IjEiLCJpYXQiOjE3MjI2MzUxMjh9.c5IjOw8kvUltArR-lrNlw9XxoRr7BILPPysa4OzZgCFlGN6pWt3UxstBOwjzllI8Y6747BC5f_swFGbeor_STg; Path=/; Domain=localhost; Max-Age=10800; Expires=Sat, 3 Aug 2024 00:45:28 GMT; Secure; HttpOnly; SameSite=None
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -968,12 +974,12 @@ Content-Length: 594
   "message" : "ok",
   "data" : {
     "accessTokenInfo" : {
-      "token" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzIyNTM4NTQ1LCJ1aWQiOiIxIiwiaWF0IjoxNzIyNTM4MjQ1fQ.O0Ok7pShRw-GBLRUtJneCeVO0kLVsLXVQNJFGe31kNs",
-      "expiredTime" : 1722538545
+      "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiIxIiwiZXhwIjoxNzIyNjM1NDI4LCJyb2xlIjoiUk9MRV9VU0VSIiwiaWF0IjoxNzIyNjM1MTI4fQ.ypBiFbaKTF3RpRah7h66yAf5imq_PBmKaB3zWh7Auf0",
+      "expiredTime" : 1722635428
     },
     "refreshTokenInfo" : {
-      "token" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3MjI1NDkwNDUsInVpZCI6IjEiLCJpYXQiOjE3MjI1MzgyNDV9.nXAUAqYFU0928ItveagUnE1kGgkB7UKrlVkqBb4gtgTDnuDB8v2pe9PQRZUESlsoGiSXLWADs5Z2U559jLCg5w",
-      "expiredTime" : 1722549045
+      "token" : "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjI2NDU5MjgsInVpZCI6IjEiLCJpYXQiOjE3MjI2MzUxMjh9.c5IjOw8kvUltArR-lrNlw9XxoRr7BILPPysa4OzZgCFlGN6pWt3UxstBOwjzllI8Y6747BC5f_swFGbeor_STg",
+      "expiredTime" : 1722645928
     }
   },
   "error" : null
@@ -1153,7 +1159,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 219
+Content-Length: 200
 
 {
   "message" : "error",
@@ -1162,7 +1168,7 @@ Content-Length: 219
     "message" : "로그인에 실패했습니다.",
     "code" : 1005,
     "status" : 400,
-    "description" : "로그인에 실패하였습니다."
+    "description" : "로그인 실패"
   }
 }</code></pre>
 </div>
@@ -1318,13 +1324,157 @@ ResponseCookies</p>
 </table>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_회원_탈퇴">2.2. 회원 탈퇴</h3>
+<div class="sect3">
+<h4 id="_회원_탈퇴_성공">2.2.1. 회원 탈퇴 성공</h4>
+<div class="paragraph">
+<p>Request</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /members/withdraw HTTP/1.1
+Host: localhost:8080
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiIyMSIsImV4cCI6MTcyMjYzNTQyOCwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTcyMjYzNTEyOH0.a62v0ZSZkZGY41hlxHAy9Yl0bi3p8KRU225J2GoIdRw</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>RequestCookies</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>accessToken</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">액세스 토큰 (Optional)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>refreshToken</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">리프레시 토큰 (Optional)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Response</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Set-Cookie: accessToken=; Path=/; Domain=localhost; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; Secure; HttpOnly; SameSite=None
+Set-Cookie: refreshToken=; Path=/; Domain=localhost; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; Secure; HttpOnly; SameSite=None
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 61
+
+{
+  "message" : "ok",
+  "data" : null,
+  "error" : null
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>ResponseCookies</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>accessToken</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">액세스 토큰 (값 비움, 만료시간 0)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>refreshToken</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">리프레시 토큰 (값 비움, 만료시간 0)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_예외_코드">3. 예외 코드</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Code</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1000</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청한 값이 올바르지 않음</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1001</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청이 너무 많음</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1002</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정의되지 않은 오류</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1003</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이미 사용중인 아이디</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1004</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이미 사용중인 닉네임</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1005</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">로그인 실패</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1006</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회원을 찾을 수 없음</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1007</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시물을 찾을 수 없음</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2024-07-01 23:24:19 +0900
+Last updated 2024-08-03 06:44:58 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

@@ -449,13 +449,30 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel1">
 <li><a href="#_공지사항">1. 공지사항</a>
 <ul class="sectlevel2">
-<li><a href="#_홈_화면_공지사항_목록_조회">1.1. 홈 화면 공지사항 목록 조회</a></li>
-<li><a href="#_공지사항_게시글_목록_화면_페이지">1.2. 공지사항 게시글 목록 화면 페이지</a></li>
-<li><a href="#_공지사항_작성">1.3. 공지사항 작성</a></li>
-<li><a href="#_공지사항_작성_권한_없음">1.4. 공지사항 작성 권한 없음</a></li>
-<li><a href="#_공지사항_수정">1.5. 공지사항 수정</a></li>
+<li><a href="#_홈_화면_공지사항_목록_조회">1.1. 홈 화면 공지사항 목록 조회</a>
+<ul class="sectlevel3">
+<li><a href="#_정상_작동">1.1.1. 정상 작동</a></li>
 </ul>
 </li>
+<li><a href="#_공지사항_게시글_목록_화면_페이지">1.2. 공지사항 게시글 목록 화면 페이지</a>
+<ul class="sectlevel3">
+<li><a href="#_페이지_요청">1.2.1. 페이지 요청</a></li>
+</ul>
+</li>
+<li><a href="#_공지사항_작성">1.3. 공지사항 작성</a>
+<ul class="sectlevel3">
+<li><a href="#_정상_작동_2">1.3.1. 정상 작동</a></li>
+<li><a href="#_권한_없음">1.3.2. 권한 없음</a></li>
+</ul>
+</li>
+<li><a href="#_공지사항_수정">1.4. 공지사항 수정</a>
+<ul class="sectlevel3">
+<li><a href="#_정상_작동_3">1.4.1. 정상 작동</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_예외_코드">2. 예외 코드</a></li>
 </ul>
 </li>
 </ul>
@@ -463,11 +480,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <h1 id="_main" class="sect0"><a href="main.html">main</a></h1>
+<div class="openblock partintro">
+<div class="content">
+공지사항 API 사용은 관리자 권한이 필요합니다.
+</div>
+</div>
 <div class="sect1">
 <h2 id="_공지사항">1. 공지사항</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_홈_화면_공지사항_목록_조회">1.1. 홈 화면 공지사항 목록 조회</h3>
+<div class="sect3">
+<h4 id="_정상_작동">1.1.1. 정상 작동</h4>
 <div class="paragraph">
 <p>Request</p>
 </div>
@@ -552,9 +576,9 @@ Content-Length: 1686
       "unpaged" : false,
       "paged" : true
     },
-    "totalPages" : 6,
     "totalElements" : 51,
     "last" : false,
+    "totalPages" : 6,
     "size" : 10,
     "number" : 0,
     "sort" : {
@@ -562,8 +586,8 @@ Content-Length: 1686
       "sorted" : true,
       "unsorted" : false
     },
-    "numberOfElements" : 10,
     "first" : true,
+    "numberOfElements" : 10,
     "empty" : false
   },
   "error" : null
@@ -750,8 +774,11 @@ Content-Length: 1686
 </tbody>
 </table>
 </div>
+</div>
 <div class="sect2">
 <h3 id="_공지사항_게시글_목록_화면_페이지">1.2. 공지사항 게시글 목록 화면 페이지</h3>
+<div class="sect3">
+<h4 id="_페이지_요청">1.2.1. 페이지 요청</h4>
 <div class="paragraph">
 <p>Request</p>
 </div>
@@ -763,8 +790,11 @@ Host: localhost:8080</code></pre>
 </div>
 </div>
 </div>
+</div>
 <div class="sect2">
 <h3 id="_공지사항_작성">1.3. 공지사항 작성</h3>
+<div class="sect3">
+<h4 id="_정상_작동_2">1.3.1. 정상 작동</h4>
 <div class="paragraph">
 <p>Request</p>
 </div>
@@ -890,8 +920,8 @@ Content-Length: 61
 </tbody>
 </table>
 </div>
-<div class="sect2">
-<h3 id="_공지사항_작성_권한_없음">1.4. 공지사항 작성 권한 없음</h3>
+<div class="sect3">
+<h4 id="_권한_없음">1.3.2. 권한 없음</h4>
 <div class="paragraph">
 <p>Request</p>
 </div>
@@ -955,8 +985,11 @@ X-Frame-Options: DENY</code></pre>
 </tbody>
 </table>
 </div>
+</div>
 <div class="sect2">
-<h3 id="_공지사항_수정">1.5. 공지사항 수정</h3>
+<h3 id="_공지사항_수정">1.4. 공지사항 수정</h3>
+<div class="sect3">
+<h4 id="_정상_작동_3">1.4.1. 정상 작동</h4>
 <div class="paragraph">
 <p>Request</p>
 </div>
@@ -1085,10 +1118,62 @@ Content-Length: 61
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_예외_코드">2. 예외 코드</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Code</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1000</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청한 값이 올바르지 않음</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1001</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청이 너무 많음</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1002</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정의되지 않은 오류</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1003</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이미 사용중인 아이디</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1004</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이미 사용중인 닉네임</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1005</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">로그인 실패</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1006</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회원을 찾을 수 없음</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1007</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시물을 찾을 수 없음</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2024-08-02 03:50:07 +0900
+Last updated 2024-08-03 06:40:57 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

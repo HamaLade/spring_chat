@@ -73,7 +73,6 @@ public class MemberController {
             Errors tooManyRequest = Errors.TOO_MANY_REQUEST;
             return ResponseMessage.errorResponseEntity(
                     tooManyRequest
-                    , tooManyRequest.getDefaultErrorMessage()
             );
         }
 
@@ -88,7 +87,7 @@ public class MemberController {
     /**
      * 회원 탈퇴
      *
-     * @return 탈퇴 성공 시 인덱스 페이지로 리다이렉트
+     * @return 탈퇴 성공 시 ok
      */
     @ResponseBody
     @DeleteMapping(ApiPaths.MEMBER_WITHDRAW)

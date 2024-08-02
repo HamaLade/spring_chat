@@ -44,14 +44,14 @@ public class ResponseMessage {
         }
     }
 
-    public static ResponseEntity<ResponseMessage> errorResponseEntity(Errors error, String message) {
+    public static ResponseEntity<ResponseMessage> errorResponseEntity(Errors error) {
         return ResponseEntity.status(error.getStatus()).body(new ResponseMessage(
                         "error"
                         , new ErrorInfo(
                                 error.getDefaultErrorMessage()
                                 , error.getCode()
                                 , error.getStatus()
-                                , message
+                                , error.getDescription()
                         )
                 )
         );

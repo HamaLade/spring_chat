@@ -18,3 +18,6 @@ endif::[]
 
 === link:member.html[회원]
 === link:notice-board.html[공지사항]
+
+== 예외 코드
+include::{snippets}/error-codes/error-codes-fields-beneath-errorCodes.adoc[]

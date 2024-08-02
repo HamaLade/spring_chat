@@ -10,6 +10,7 @@ import com.hs.persistence.repository.memeber.MemberRepository;
 import com.hs.setting.utils.jwt.JwtUtil;
 import com.hs.setting.utils.jwt.MemberJwtProperties;
 import com.hs.setting.utils.jwt.TokenInfo;
+import com.hs.setting.utils.member.MemberUtil;
 import com.hs.setting.utils.web.HttpServletUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -340,6 +341,7 @@ public class MemberAuthService implements AuthService {
 
     /**
      * 회원 탈퇴
+     * @throws AuthorizationFailedException 인증 실패 시
      * @throws MemberNotFoundException 탈퇴 대상의 회원을 찾을 수 없을 때
      */
     @Transactional

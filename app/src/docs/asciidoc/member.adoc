@@ -82,3 +82,17 @@ ResponseFields
 include::{snippets}/members-logout/response-fields.adoc[]
 ResponseCookies
 include::{snippets}/members-logout/cookie-response-headers.adoc[]
+
+=== 회원 탈퇴
+==== 회원 탈퇴 성공
+Request
+include::{snippets}/members-withdraw/http-request.adoc[]
+RequestCookies
+include::{snippets}/members-withdraw/cookie-request-headers.adoc[]
+Response
+include::{snippets}/members-withdraw/http-response.adoc[]
+ResponseCookies
+include::{snippets}/members-withdraw/cookie-response-headers.adoc[]
+
+== 예외 코드
+include::{snippets}/error-codes/error-codes-fields-beneath-errorCodes.adoc[]

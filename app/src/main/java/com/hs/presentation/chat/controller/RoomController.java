@@ -66,7 +66,6 @@ public class RoomController {
             Errors tooManyRequest = Errors.TOO_MANY_REQUEST;
             return ResponseMessage.errorResponseEntity(
                             tooManyRequest
-                            , tooManyRequest.getDefaultErrorMessage()
                     );
         }
 

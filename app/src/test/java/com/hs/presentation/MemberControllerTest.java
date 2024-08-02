@@ -2,14 +2,17 @@ package com.hs.presentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hs.application.member.service.MemberAuthService;
+import com.hs.persistence.entity.member.Member;
 import com.hs.persistence.repository.memeber.MemberRepository;
 import com.hs.presentation.error.Errors;
 import com.hs.presentation.auth.dto.MemberLoginRequestDto;
 import com.hs.presentation.auth.dto.MemberSignUpRequestDto;
+import com.hs.setting.utils.jwt.TokenInfo;
 import com.hs.utils.FieldDescriptorUtils;
 import com.hs.utils.RequestCookiesSnippet;
 import com.hs.utils.ResponseCookiesSnippet;
 import com.hs.setting.utils.jwt.MemberJwtProperties;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -27,8 +30,11 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -237,7 +243,33 @@ public class MemberControllerTest {
                         document("members-logout",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
-                                responseBody(),
+                                RequestCookiesSnippet.customRequestHeaderCookies(
+                                        headerWithName(MemberJwtProperties.ACCESS_TOKEN_NAME).optional().description("액세스 토큰 (Optional)"),
+                                        headerWithName(MemberJwtProperties.REFRESH_TOKEN_NAME).optional().description("리프레시 토큰 (Optional)")
+                                ),
+                                ResponseCookiesSnippet.customResponseHeaderCookies(
+                                        headerWithName(MemberJwtProperties.ACCESS_TOKEN_NAME).description("액세스 토큰 (값 비움, 만료시간 0)"),
+                                        headerWithName(MemberJwtProperties.REFRESH_TOKEN_NAME).description("리프레시 토큰 (값 비움, 만료시간 0)")
+                                )
+                        )
+                );
+    }
+
+    @Test
+    @DisplayName("회원 탈퇴")
+    void deleteMember() throws Exception {
+
+        Member member = memberRepository.findByNickname("delete_target").orElseThrow();
+        TokenInfo tokenInfo = memberAuthService.generateAccessToken(member.getId(), Instant.now());
+        Cookie cookie = new Cookie(MemberJwtProperties.ACCESS_TOKEN_NAME, tokenInfo.getToken());
+
+        mockMvc.perform(delete(ApiPaths.MEMBER_WITHDRAW).cookie(cookie))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(
+                        document("members-withdraw",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
                                 RequestCookiesSnippet.customRequestHeaderCookies(
                                         headerWithName(MemberJwtProperties.ACCESS_TOKEN_NAME).optional().description("액세스 토큰 (Optional)"),
                                         headerWithName(MemberJwtProperties.REFRESH_TOKEN_NAME).optional().description("리프레시 토큰 (Optional)")
