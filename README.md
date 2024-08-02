@@ -1,4 +1,5 @@
 # Spring Chat Application
+
 ## 프로젝트 개요
 이 프로젝트는 Spring Boot를 기반으로 한 채팅 애플리케이션입니다. 
 포트폴리오 성격의 프로젝트입니다.
@@ -15,6 +16,9 @@
 - Messaging: Kafka, WebSocket
 - Documentation: Spring REST Docs
 - API Communication: WebClient
+
+## 사이트 주소
+- [Spring-Chat](https://www.spring-chat.com)
 
 ## API 문서
 - [웹 페이지 API](https://hamalade.github.io/spring_chat/)
