@@ -300,11 +300,7 @@
 <div class="content-wrapper">
     <div class="chat-area">
         <div id="chatMessages" class="chat-messages">
-            <div th:each="recentMessage : ${roomDetailInfo.recentMessages}"
-                 th:class="${recentMessage.senderNickname == roomDetailInfo.memberNickname ? 'message sent' : 'message received'}">
-                <div class="message-sender" th:text="${recentMessage.senderNickname}"></div>
-                <div class="message-content" th:text="${recentMessage.message}"></div>
-            </div>
+            <!-- 채팅 메시지 -->
         </div>
         <div class="chat-input">
             <input type="text" id="messageInput" placeholder="메시지를 입력하세요">
@@ -329,6 +325,7 @@
     participants.add([[${participant.memberNickname}]]);
     /*[/]*/
     let lastMessageAt = [[${roomDetailInfo.lastMessageAt}]];
+    const initialMessages = /*[[${roomDetailInfo.recentMessages}]]*/ [];
 
     function connect() {
         return new Promise((resolve, reject) => {
@@ -433,6 +430,15 @@
         }
     }
 
+    function loadInitialMessages() {
+        initialMessages.forEach(message => {
+            showMessage({
+                memberNickname: message.senderNickname,
+                textContent: message.message
+            });
+        });
+    }
+
     function showMessage(message) {
         let messageElement = document.createElement('div');
         messageElement.className = 'message ' + (message.memberNickname === memberNickname ? 'sent' : 'received');
@@ -443,19 +449,62 @@
 
         let contentElement = document.createElement('div');
         contentElement.className = 'message-content';
-        contentElement.textContent = message.textContent;
+        contentElement.innerHTML = convertToClickableLinks(message.textContent);
+
+        let previewElement = document.createElement('div');
+        previewElement.className = 'message-preview';
 
         messageElement.appendChild(senderElement);
         messageElement.appendChild(contentElement);
+        messageElement.appendChild(previewElement);
 
         document.getElementById('chatMessages').appendChild(messageElement);
+
+        // YouTube 링크 미리보기 생성
+        generateYouTubePreview(message.textContent, previewElement);
 
         let chatMessages = document.getElementById('chatMessages');
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    function convertToClickableLinks(text) {
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        return text.replace(urlRegex, function(url) {
+            return '<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + url + '</a>';
+        });
+    }
+
+    function generateYouTubePreview(text, previewElement) {
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        const urls = text.match(urlRegex);
+
+        if (urls && urls.length > 0) {
+            urls.forEach(url => {
+                const videoId = extractYouTubeVideoId(url);
+                if (videoId) {
+                    const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/0.jpg`;
+                    const previewHtml = `
+                    <div class="youtube-preview">
+                        <a href="${url}" target="_blank" rel="noopener noreferrer">
+                            <img src="${thumbnailUrl}" alt="YouTube Thumbnail">
+                        </a>
+                    </div>
+                `;
+                    previewElement.innerHTML += previewHtml;
+                }
+            });
+        }
+    }
+
+    function extractYouTubeVideoId(url) {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length === 11) ? match[2] : null;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
         setUpChatRoom();
+        loadInitialMessages();
     });
 
     function logout() {
