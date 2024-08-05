@@ -17,7 +17,7 @@ public class ChatController {
     private final ObjectMapper objectMapper;
     private final ChatService chatService;
 
-    @KafkaListener(topics = "chat-message", groupId = "chat")
+    @KafkaListener(topics = "chat-message-save", groupId = "web")
     public void listen(String chatMessageRequestString) {
 
         ChatMessageRequestDto chatMessageRequestDto = null;

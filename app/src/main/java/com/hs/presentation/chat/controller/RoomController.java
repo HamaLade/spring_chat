@@ -9,6 +9,7 @@ import com.hs.presentation.ApiPaths;
 import com.hs.presentation.ResponseMessage;
 import com.hs.presentation.chat.dto.CreateRoomRequestDto;
 import com.hs.presentation.chat.dto.InviteMemberRequestDto;
+import com.hs.presentation.chat.dto.PreviousChatMessageRequestDto;
 import com.hs.presentation.error.Errors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,13 +17,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Objects;
 
 /**
  * 채팅방 컨트롤러
@@ -93,6 +91,17 @@ public class RoomController {
         model.addAttribute("roomDetailInfo", roomDetailInfo);
 
         return "chat-room";
+    }
+
+    @ResponseBody()
+    @PostMapping(ApiPaths.CHAT_ROOM_PREVIOUS_MESSAGES)
+    public ResponseEntity<ResponseMessage> getPreviousMessages(
+            @RequestBody PreviousChatMessageRequestDto previousChatMessageRequestDto
+            ) {
+        return ResponseEntity.ok(new ResponseMessage("previous messages", roomService.getPreviousMessages(
+                previousChatMessageRequestDto.getRoomId()
+                , previousChatMessageRequestDto.getLastMessageAt()
+        )));
     }
 
     @ResponseBody

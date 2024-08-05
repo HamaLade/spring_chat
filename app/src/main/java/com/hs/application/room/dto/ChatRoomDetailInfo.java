@@ -1,5 +1,6 @@
 package com.hs.application.room.dto;
 
+import com.hs.persistence.entity.chatroom.ChatType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -43,12 +44,14 @@ public class ChatRoomDetailInfo {
     @Getter
     @Setter
     public static class ChatMessageInfo {
+        private ChatType chatType;
         private String message;
         private String senderNickname;
         private Boolean hasFiles;
         private LocalDateTime createdAt;
 
-        public ChatMessageInfo(String message, String senderNickname, Boolean hasFiles, LocalDateTime createdAt) {
+        public ChatMessageInfo(ChatType chatType, String message, String senderNickname, Boolean hasFiles, LocalDateTime createdAt) {
+            this.chatType = chatType;
             this.message = message;
             this.senderNickname = senderNickname;
             this.hasFiles = hasFiles;

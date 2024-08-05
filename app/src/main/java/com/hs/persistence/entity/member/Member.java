@@ -1,5 +1,6 @@
 package com.hs.persistence.entity.member;
 
+import com.hs.persistence.entity.chatroom.ChatType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -68,6 +69,14 @@ public class Member {
 
     public void changePassword(String password) {
         this.password = password;
+    }
+
+    public String getStatusMessage(ChatType chatType) {
+        return switch (chatType) {
+            case INVITATION -> this.nickname + "님이 입장하셨습니다.";
+            case LEAVE -> this.nickname + "님이 퇴장하셨습니다.";
+            default -> null;
+        };
     }
 
 }

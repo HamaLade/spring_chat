@@ -1,9 +1,13 @@
 package com.hs.presentation.chat;
 
 import com.hs.application.websocket.service.ChatWebSocketService;
+import com.hs.presentation.chat.dto.ChatMessageRequest;
+import com.hs.presentation.chat.dto.ChatMessageSend;
+import com.hs.presentation.chat.dto.ChatRoomJoinMessage;
 import com.hs.settings.utils.MessageRateLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -67,4 +71,37 @@ public class ChatController {
         log.error("Failed to identify user");
         return "unknown";
     }
+
+    @KafkaListener(topics = "chat-room-join", groupId = "socket")
+    public void chatRoomJoin(String message) {
+
+        ChatRoomJoinMessage chatRoomJoinMessage = chatWebSocketService.getChatRoomJoinMessage(message);
+
+        if (chatRoomJoinMessage != null) {
+            ChatMessageSend chatMessageSend = new ChatMessageSend(
+                    ChatType.INVITATION,
+                    chatRoomJoinMessage.getSenderNickname(),
+                    chatRoomJoinMessage.getMessage()
+            );
+            messagingTemplate.convertAndSend("/subscribe/chat/room/" + chatRoomJoinMessage.getRoomId(), chatMessageSend);
+            messagingTemplate.convertAndSend("/subscribe/chat/join/" + chatRoomJoinMessage.getRoomId(), chatRoomJoinMessage.getSenderNickname());
+        }
+    }
+
+    @KafkaListener(topics = "chat-room-leave", groupId = "socket")
+    public void chatRoomLeave(String message) {
+
+        ChatRoomJoinMessage chatRoomJoinMessage = chatWebSocketService.getChatRoomJoinMessage(message);
+
+        if (chatRoomJoinMessage != null) {
+            ChatMessageSend chatMessageSend = new ChatMessageSend(
+                    ChatType.LEAVE,
+                    chatRoomJoinMessage.getSenderNickname(),
+                    chatRoomJoinMessage.getMessage()
+            );
+            messagingTemplate.convertAndSend("/subscribe/chat/room/" + chatRoomJoinMessage.getRoomId(), chatMessageSend);
+            messagingTemplate.convertAndSend("/subscribe/chat/leave/" + chatRoomJoinMessage.getRoomId(), chatRoomJoinMessage.getSenderNickname());
+        }
+    }
+
 }

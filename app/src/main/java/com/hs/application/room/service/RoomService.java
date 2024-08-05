@@ -1,10 +1,15 @@
 package com.hs.application.room.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hs.application.member.model.MemberUserDetails;
 import com.hs.application.room.dto.ChatRoomDetailInfo;
 import com.hs.application.room.dto.ChatRoomInfo;
+import com.hs.application.room.dto.ChatRoomJoinMessage;
+import com.hs.application.room.dto.ChatRoomLeaveMessage;
 import com.hs.application.room.exception.ChatRoomCreateFailedException;
 import com.hs.persistence.entity.chatroom.Chat;
+import com.hs.persistence.entity.chatroom.ChatType;
 import com.hs.persistence.entity.chatroom.Participant;
 import com.hs.persistence.entity.chatroom.Room;
 import com.hs.persistence.entity.member.Member;
@@ -19,10 +24,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,10 +43,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RoomService {
 
+    private final ChatService chatService;
     private final RoomRepository roomRepository;
     private final MemberRepository memberRepository;
     private final ParticipantRepository participantRepository;
     private final ChatRepository chatRepository;
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final ObjectMapper objectMapper;
 
     /**
      * 채팅방 생성
@@ -153,6 +163,7 @@ public class RoomService {
         // chatList를 반대 순서로 List<ChatMessageInfo>로 변환
         List<ChatRoomDetailInfo.ChatMessageInfo> recentMessages = chatList.stream()
                 .map(chat -> new ChatRoomDetailInfo.ChatMessageInfo(
+                        chat.getChatType(),
                         chat.getMessage(),
                         chat.getSenderNickname(),
                         chat.getHasFiles(),
@@ -177,12 +188,29 @@ public class RoomService {
         return chatRoomDetailInfo;
     }
 
+    // ChatRoom의 lastMessageTime(LocalDateTime)의 이전 50개의 채팅 메시지를 가져오는 메서드
+    public List<ChatRoomDetailInfo.ChatMessageInfo> getPreviousMessages(Long roomId, LocalDateTime lastMessageTime) {
+        List<Chat> chatList = chatRepository.findTop50ByRoomIdAndCreateDateBeforeOrderByIdDesc(roomId, lastMessageTime);
+        List<ChatRoomDetailInfo.ChatMessageInfo> chatMessageInfos = chatList.stream()
+                .map(chat -> new ChatRoomDetailInfo.ChatMessageInfo(
+                        chat.getChatType(),
+                        chat.getMessage(),
+                        chat.getSenderNickname(),
+                        chat.getHasFiles(),
+                        chat.getCreateDate()
+                ))
+                .collect(Collectors.toList());
+        Collections.reverse(chatMessageInfos);
+        return chatMessageInfos;
+    }
+
+
     /**
      * 채팅방 참가
      * @param roomId 채팅방 ID
      */
     @Transactional
-    public void chatRoomJoin(Long roomId) {
+    public void chatRoomJoin(Long roomId) throws JsonProcessingException {
         MemberUserDetails memberUserDetails = (MemberUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Member member = memberRepository.findById(Long.parseLong(memberUserDetails.getUsername())).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 사용자입니다.")
@@ -198,6 +226,19 @@ public class RoomService {
             );
             participant.relationWithRoom(room);
             participantRepository.save(participant);
+            chatService.saveChatMessage(
+                    ChatType.INVITATION,
+                    member.getStatusMessage(ChatType.INVITATION),
+                    roomId,
+                    member.getNickname(),
+                    false
+            );
+            ChatRoomJoinMessage chatRoomJoinMessage = new ChatRoomJoinMessage(
+                    roomId,
+                    member.getNickname(),
+                    member.getStatusMessage(ChatType.INVITATION)
+            );
+            kafkaTemplate.send("chat-room-join", objectMapper.writeValueAsString(chatRoomJoinMessage));
         }
     }
 
@@ -207,7 +248,7 @@ public class RoomService {
      * @param memberNickname 초대할 사용자 닉네임
      */
     @Transactional
-    public void chatRoomInvite(Long roomId, String memberNickname) {
+    public void chatRoomInvite(Long roomId, String memberNickname) throws JsonProcessingException {
 
         Room room = roomRepository.findById(roomId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 채팅방입니다.")
@@ -227,6 +268,21 @@ public class RoomService {
         );
 
         participant.relationWithRoom(room);
+
+        chatService.saveChatMessage(
+                ChatType.INVITATION,
+                member.getStatusMessage(ChatType.INVITATION),
+                roomId,
+                member.getNickname(),
+                false
+        );
+        ChatRoomJoinMessage chatRoomJoinMessage = new ChatRoomJoinMessage(
+                roomId,
+                member.getNickname(),
+                member.getStatusMessage(ChatType.INVITATION)
+        );
+        kafkaTemplate.send("chat-room-join", objectMapper.writeValueAsString(chatRoomJoinMessage));
+
     }
 
     /**
@@ -255,6 +311,25 @@ public class RoomService {
             roomRepository.delete(room);
         } else {
             participantRepository.deleteByRoomIdAndMemberId(room.getId(), member.getId());
+            chatService.saveChatMessage(
+                    ChatType.LEAVE,
+                    member.getStatusMessage(ChatType.LEAVE),
+                    roomId,
+                    member.getNickname(),
+                    false
+            );
+
+            ChatRoomLeaveMessage chatRoomLeaveMessage = new ChatRoomLeaveMessage(
+                    roomId,
+                    member.getNickname(),
+                    member.getStatusMessage(ChatType.LEAVE)
+            );
+
+            try {
+                kafkaTemplate.send("chat-room-leave", objectMapper.writeValueAsString(chatRoomLeaveMessage));
+            } catch (JsonProcessingException e) {
+                log.error("JsonProcessingException: {}", e.getMessage());
+            }
         }
 
     }

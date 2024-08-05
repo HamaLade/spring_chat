@@ -39,8 +39,6 @@ public class ChatService {
         Member member = memberRepository.findByNickname(senderNickname).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-        message = classifyMessage(chatType, senderNickname, message);
-
         Chat chat = new Chat(
                 chatType
                 , message
@@ -51,15 +49,6 @@ public class ChatService {
 
         chatRepository.save(chat);
 
-    }
-
-    public String classifyMessage(ChatType chatType, String senderNickname, String message) {
-        if (chatType.equals(ChatType.INVITATION)) {
-            return senderNickname + "님이 초대하였습니다.";
-        } else if (chatType.equals(ChatType.LEAVE)) {
-            return senderNickname + "님이 나갔습니다.";
-        }
-        return message;
     }
 
 }

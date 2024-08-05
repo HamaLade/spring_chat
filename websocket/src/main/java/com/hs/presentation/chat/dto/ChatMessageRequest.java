@@ -1,5 +1,6 @@
-package com.hs.presentation.chat;
+package com.hs.presentation.chat.dto;
 
+import com.hs.presentation.chat.ChatType;
 import lombok.Getter;
 
 @Getter
