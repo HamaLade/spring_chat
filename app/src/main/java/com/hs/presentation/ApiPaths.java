@@ -33,8 +33,7 @@ public class ApiPaths {
     public static final String CHAT_ROOM_SEARCH_PUBLIC = CHAT_ROOM_ROOT_PATH + "/search/public";
     public static final String CHAT_ROOM_CREATE = CHAT_ROOM_ROOT_PATH + "/create";
     public static final String CHAT_ROOM_JOIN = CHAT_ROOM_ROOT_PATH + "/join/{roomId}";
-    // 채팅방 현재 이전 메시지 조회 (previous message)
-    public static final String CHAT_ROOM_PREVIOUS_MESSAGES = CHAT_ROOM_ROOT_PATH + "/previous-messages";
+    public static final String CHAT_ROOM_PREVIOUS_MESSAGES = CHAT_ROOM_ROOT_PATH + "/previous-messages"; // 채팅방 현재 이전 메시지 조회 (previous message)
     public static final String CHAT_ROOM_EXIT = CHAT_ROOM_ROOT_PATH + "/exit/{roomId}";
     public static final String CHAT_ROOM_INVITE = CHAT_ROOM_ROOT_PATH + "/invite/{roomId}";
 
