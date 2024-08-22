@@ -1,17 +1,13 @@
 package com.hs.presentation.chat;
 
 import com.hs.application.websocket.service.ChatWebSocketService;
-import com.hs.presentation.chat.dto.ChatMessageRequest;
-import com.hs.presentation.chat.dto.ChatMessageSend;
-import com.hs.presentation.chat.dto.ChatRoomJoinMessage;
+import com.hs.presentation.chat.dto.*;
 import com.hs.settings.utils.MessageRateLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.Headers;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.handler.annotation.*;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
@@ -84,7 +80,7 @@ public class ChatController {
                     chatRoomJoinMessage.getMessage()
             );
             messagingTemplate.convertAndSend("/subscribe/chat/room/" + chatRoomJoinMessage.getRoomId(), chatMessageSend);
-            messagingTemplate.convertAndSend("/subscribe/chat/join/" + chatRoomJoinMessage.getRoomId(), chatRoomJoinMessage.getSenderNickname());
+            messagingTemplate.convertAndSend("/subscribe/chat/join/room/" + chatRoomJoinMessage.getRoomId(), chatRoomJoinMessage);
         }
     }
 
@@ -100,8 +96,44 @@ public class ChatController {
                     chatRoomJoinMessage.getMessage()
             );
             messagingTemplate.convertAndSend("/subscribe/chat/room/" + chatRoomJoinMessage.getRoomId(), chatMessageSend);
-            messagingTemplate.convertAndSend("/subscribe/chat/leave/" + chatRoomJoinMessage.getRoomId(), chatRoomJoinMessage.getSenderNickname());
+            messagingTemplate.convertAndSend("/subscribe/chat/leave/room/" + chatRoomJoinMessage.getRoomId(), chatRoomJoinMessage);
         }
+    }
+
+    @MessageMapping("/chat/videocall/request/{roomId}")
+    public void handleVideoCallRequest(@Payload VideoCallRequest request, SimpMessageHeaderAccessor headerAccessor) {
+        String roomId = headerAccessor.getDestination().split("/")[5];
+        messagingTemplate.convertAndSend("/subscribe/chat/videocall/request/" + roomId, request);
+    }
+
+    @MessageMapping("/chat/videocall/accept/{roomId}")
+    public void handleVideoCallAccept(@Payload VideoCallAccept accept, SimpMessageHeaderAccessor headerAccessor) {
+        String roomId = headerAccessor.getDestination().split("/")[5];
+        messagingTemplate.convertAndSend("/subscribe/chat/videocall/accept/" + roomId, accept);
+    }
+
+    @MessageMapping("/chat/videocall/reject/{roomId}")
+    public void handleVideoCallReject(@Payload VideoCallReject reject, SimpMessageHeaderAccessor headerAccessor) {
+        String roomId = headerAccessor.getDestination().split("/")[5];
+        messagingTemplate.convertAndSend("/subscribe/chat/videocall/reject/" + roomId, reject);
+    }
+
+    @MessageMapping("/chat/videocall/offer/{roomId}")
+    public void handleVideoCallOffer(@Payload VideoCallOffer offer, SimpMessageHeaderAccessor headerAccessor) {
+        String roomId = headerAccessor.getDestination().split("/")[5];
+        messagingTemplate.convertAndSend("/subscribe/chat/videocall/offer/" + roomId, offer);
+    }
+
+    @MessageMapping("/chat/videocall/answer/{roomId}")
+    public void handleVideoCallAnswer(@Payload VideoCallAnswer answer, SimpMessageHeaderAccessor headerAccessor) {
+        String roomId = headerAccessor.getDestination().split("/")[5];
+        messagingTemplate.convertAndSend("/subscribe/chat/videocall/answer/" + roomId, answer);
+    }
+
+    @MessageMapping("/chat/videocall/ice/{roomId}")
+    public void handleIceCandidate(@Payload IceCandidate iceCandidate, SimpMessageHeaderAccessor headerAccessor) {
+        String roomId = headerAccessor.getDestination().split("/")[5];
+        messagingTemplate.convertAndSend("/subscribe/chat/videocall/ice/" + roomId, iceCandidate);
     }
 
 }

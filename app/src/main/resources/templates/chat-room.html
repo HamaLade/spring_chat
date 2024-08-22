@@ -287,6 +287,44 @@
                 order: -1;
             }
         }
+
+        .context-menu {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 5px 0;
+            z-index: 1000;
+        }
+        .context-menu ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        .context-menu ul li {
+            padding: 5px 20px;
+            cursor: pointer;
+        }
+        .context-menu ul li:hover {
+            background-color: #f0f0f0;
+        }
+        #videoCallModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #videoCallModal video {
+            max-width: 45%;
+            margin: 10px;
+            border: 2px solid #fff;
+        }
     </style>
 </head>
 <body>
@@ -327,6 +365,16 @@
         <ul id="participants">
         </ul>
     </div>
+    <div id="contextMenu" class="context-menu">
+        <ul>
+            <li onclick="requestVideoCall()">영상통화 요청</li>
+        </ul>
+    </div>
+    <div id="videoCallModal" style="display: none;">
+        <video id="localVideo" autoplay muted></video>
+        <video id="remoteVideo" autoplay></video>
+        <button onclick="endVideoCall()">통화 종료</button>
+    </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
@@ -343,8 +391,17 @@
     const initialMessages = /*[[${roomDetailInfo.recentMessages}]]*/ [];
     let isLoading = false;
     let hasMoreMessages = true;
+    let selectedUser = null;
+    let peerConnection;
+    let localStream;
+    let remoteStream;
+    const configuration = {
+        iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' }
+        ]
+    };
 
-    window.addEventListener('resize', function() {
+    window.addEventListener('resize', function () {
         let chatMessages = document.getElementById('chatMessages');
         chatMessages.scrollTop = chatMessages.scrollHeight;
     });
@@ -373,6 +430,7 @@
                     showMessage(false, JSON.parse(message.body));
                 });
                 stompClient.subscribe('/subscribe/chat/join/room/' + roomId, function (message) {
+                    console.log(message)
                     showParticipants(JSON.parse(message.body));
                 });
                 stompClient.subscribe('/subscribe/chat/leave/room/' + roomId, function (message) {
@@ -380,6 +438,18 @@
                 });
                 stompClient.subscribe('/queue/errors/' + memberNickname, function (message) {
                     alert('에러: ' + message.body)
+                });
+                stompClient.subscribe('/subscribe/chat/videocall/request/' + roomId, function (message) {
+                    handleVideoCallRequest(JSON.parse(message.body));
+                });
+                stompClient.subscribe('/subscribe/chat/videocall/offer/' + roomId, function (message) {
+                    handleVideoCallOffer(JSON.parse(message.body));
+                });
+                stompClient.subscribe('/subscribe/chat/videocall/answer/' + roomId, function (message) {
+                    handleVideoCallAnswer(JSON.parse(message.body));
+                });
+                stompClient.subscribe('/subscribe/chat/videocall/ice/' + roomId, function (message) {
+                    handleIceCandidate(JSON.parse(message.body));
                 });
                 clearTimeout(connectionTimeout);
                 resolve(stompClient);
@@ -420,19 +490,20 @@
 
     function showParticipants(message) {
         if (message) {
-            participants.add(message.memberNickname);
+            participants.add(message.senderNickname);
         }
         let participantsList = document.getElementById('participants');
         participantsList.innerHTML = '';
         Array.from(participants).sort().forEach(participant => {
             let li = document.createElement('li');
             li.textContent = participant;
+            li.addEventListener('contextmenu', (event) => showContextMenu(event, participant));
             participantsList.appendChild(li);
         });
     }
 
     function leaveParticipants(message) {
-        participants.delete(message.memberNickname);
+        participants.delete(message.senderNickname);
         let participantsList = document.getElementById('participants');
         participantsList.innerHTML = '';
         Array.from(participants).sort().forEach(participant => {
@@ -687,8 +758,6 @@
         });
     }
 
-    let selectedUser = null;
-
     function openInviteModal() {
         document.getElementById('inviteModal').style.display = 'block';
     }
@@ -747,6 +816,116 @@
                 alert(error.message);
             });
     }
+
+    function showContextMenu(event, user) {
+        event.preventDefault();
+        selectedUser = user;
+        const contextMenu = document.getElementById('contextMenu');
+        contextMenu.style.display = 'block';
+        contextMenu.style.left = `${event.pageX}px`;
+        contextMenu.style.top = `${event.pageY}px`;
+    }
+
+    function requestVideoCall() {
+        if (selectedUser) {
+            stompClient.send("/publish/chat/videocall/request/" + roomId, {},
+                JSON.stringify({from: memberNickname, to: selectedUser}));
+        }
+    }
+
+    function handleVideoCallRequest(request) {
+        if (request.to === memberNickname || request.from === memberNickname) {
+            confirm("영상통화 요청이 왔습니다. 수락하시겠습니까?")
+            stompClient.send("/publish/chat/videocall/accept/" + roomId, {},
+                JSON.stringify({from: memberNickname, to: request.from}));
+            startVideoCall(false);
+        } else {
+            stompClient.send("/publish/chat/videocall/reject/" + roomId, {},
+                JSON.stringify({from: memberNickname, to: request.from}));
+        }
+    }
+
+    async function startVideoCall(isInitiator) {
+        try {
+            localStream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
+            document.getElementById('localVideo').srcObject = localStream;
+
+            peerConnection = new RTCPeerConnection(configuration);
+
+            localStream.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localStream);
+            });
+
+            peerConnection.ontrack = event => {
+                document.getElementById('remoteVideo').srcObject = event.streams[0];
+            };
+
+            peerConnection.onicecandidate = event => {
+                if (event.candidate) {
+                    stompClient.send("/publish/chat/videocall/ice/" + roomId, {},
+                        JSON.stringify({from: memberNickname, to: selectedUser, candidate: event.candidate}));
+                }
+            };
+
+            if (isInitiator) {
+                const offer = await peerConnection.createOffer();
+                await peerConnection.setLocalDescription(offer);
+                stompClient.send("/publish/chat/videocall/offer/" + roomId, {},
+                    JSON.stringify({from: memberNickname, to: selectedUser, offer: offer}));
+            }
+
+            document.getElementById('videoCallModal').style.display = 'block';
+        } catch (error) {
+            console.error('Error starting video call:', error);
+        }
+    }
+
+    async function handleVideoCallOffer(offerMessage) {
+        try {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(offerMessage.offer));
+            const answer = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answer);
+            stompClient.send("/publish/chat/videocall/answer/" + roomId, {},
+                JSON.stringify({from: memberNickname, to: offerMessage.from, answer: answer}));
+        } catch (error) {
+            console.error('Error handling video call offer:', error);
+        }
+    }
+
+    async function handleVideoCallAnswer(answerMessage) {
+        try {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(answerMessage.answer));
+        } catch (error) {
+            console.error('Error handling video call answer:', error);
+        }
+    }
+
+    function handleIceCandidate(iceCandidateMessage) {
+        try {
+            peerConnection.addIceCandidate(new RTCIceCandidate(iceCandidateMessage.candidate));
+        } catch (error) {
+            console.error('Error handling ICE candidate:', error);
+        }
+    }
+
+    function endVideoCall() {
+        if (peerConnection) {
+            peerConnection.close();
+        }
+        if (localStream) {
+            localStream.getTracks().forEach(track => track.stop());
+        }
+        document.getElementById('localVideo').srcObject = null;
+        document.getElementById('remoteVideo').srcObject = null;
+        document.getElementById('videoCallModal').style.display = 'none';
+    }
+
+    document.addEventListener('click', function (event) {
+        const contextMenu = document.getElementById('contextMenu');
+        if (!contextMenu.contains(event.target)) {
+            contextMenu.style.display = 'none';
+        }
+    });
 
     document.getElementById('userSearchInput').addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
